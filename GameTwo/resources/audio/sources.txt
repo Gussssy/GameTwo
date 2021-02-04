@@ -1,0 +1,57 @@
+teleport: https://freesound.org/people/DExUS5/sounds/361686/
+
+Blizzard: https://freesound.org/people/stormpetrel/sounds/173096/
+
+RainAndThunder https://freesound.org/people/FlatHill/sounds/237729/
+
+Error1 (8 bit)
+
+Error2 (not the 8 bit one) https://freesound.org/people/distillerystudio/sounds/327735/
+
+Enable
+https://freesound.org/people/Ionicsmusic/sounds/137927/
+
+TurnOff
+https://freesound.org/people/InspectorJ/sounds/458584/
+
+
+Beep1
+https://freesound.org/people/IndigoRay/sounds/339132/
+
+doing1
+https://freesound.org/people/Leszek_Szary/sounds/146726/
+
+endine_idle_1
+https://freesound.org/people/Abacagi/sounds/485940/
+
+whoosh_1
+https://freesound.org/people/qubodup/sounds/60013/
+
+wind1
+https://freesound.org/people/InspectorJ/sounds/376415/
+
+spellCast1
+https://freesound.org/people/spookymodem/sounds/249819/
+
+arrow_release
+https://freesound.org/people/EverHeat/sounds/205563/
+
+
+ice_spell_1
+https://freesound.org/people/alonsotm/sounds/396499/
+
+ice_break_1
+https://freesound.org/people/Aurelon/sounds/422633/
+
+ice_break_2
+ice_break_3
+ice_break_4
+https://freesound.org/people/dheming/sounds/268023/
+
+
+spell_charging_1
+https://freesound.org/people/Bertsz/sounds/500910/
+
+portal_open
+https://freesound.org/people/alanmcki/sounds/401324/
+

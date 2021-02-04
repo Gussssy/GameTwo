@@ -1,0 +1,33 @@
+Thoughts: it kinda sucks that when the npc goes of course and a new path needs to be made, the path object itself cannot find a new path, the npc has to call path again
+	- i would like it if a path could do this itself
+	- could add a method to path reset that takes a path parameter
+	- NOTE, i dont want to waste time on this but it needs to be noted for later as this seems like bad design when the npc has to be conserened with the inner workings of path
+
+
+
+Bugs:
+
+- down movements and horizontal movements... dont want this to be allowed, makes impossible paths to execute
+
+
+
+- random jump at start odf certain paths
+ 	- not sure what is causing this but the pathfinding is pretty bugged anyway will investogate this when more rpessing issue are dealth with.
+
+
+
+- allowing up then right right ...? oh no
+	Reading path with contents: 
+		up
+		right
+		right
+		right
+		down
+		right
+		
+
+
+- able to go up 4 ! 
+may have fixed this but not tested: 
+	was: if(tilesUp > 3) now : if(tilesUp >= 3)
+		- before 3 up would have allowed another up so 4 ups... now 3 tilesUp will stop any more up... I think. 

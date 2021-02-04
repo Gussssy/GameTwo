@@ -1,0 +1,6 @@
+Want the GameObject clasees as minimal as possible, collision could be handled elsewhere in dedicated classes
+ - collisison in gameobject only calls the relevent methods, doesnt have all the calculations
+ 
+ 
+
+ 

@@ -1,0 +1,28 @@
+
+ArrayList<PossibleMoves> moves
+
+
+configurePathFind(startTile LevelTile, npc NPC){
+
+
+}
+
+
+
+pathFind(){
+
+	
+	
+	
+	
+	}
+	
+	
+	
+	
+	class PossibleMove{
+	
+	int g(n)
+	int h(n)
+	
+	}

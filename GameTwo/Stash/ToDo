@@ -1,0 +1,66 @@
+PathFinding: 
+[DONE]- fix inability to path over two high tile stack
+- fix airmoves and down + horizontal moves when not on ground
+- find a way for NPCs to choose locations to path to automatically
+	- thinking maybe game will hold a an array of reachable position that the NPCs can choose from
+- implement A* like behaviour
+- determine worst case and make saure that time is below 1/60th of a second
+[50%~!]- finish path execution to a basic level
+- allow jumping over 2 wide holes 
+LATER
+- advanced pathfinding, jump over a several tiles, staying within a certain tolerance and coninuting path execution
+- detect when NPC has deviated from path and needs to go back (will be important when NPCs can be pushed around)
+- pathfinding that takes into account platforms
+- pathfinding that takes into account moving platforms
+
+
+NPC Combat (impt)
+- NPCs aware of other NPCs/player around them
+- NPCs can use weapons
+- NPCs attack other NPCs
+- NPCs actually die when reduced to 0 HP
+
+
+
+Rework of Weapon System
+- abaility to interchange weapons 
+- common abstract classes for weapons that are extended (weapons as components? this does seem to make sense)
+- Sword/meelee weapon
+
+
+UI
+- Inventory / tab menu
+- stats menu
+- HUD - health
+
+
+Interaction / Activation 
+- Event system when pressing 'e' when near something, something happens, e.g board ship
+
+
+Menu Screen and Game Screen
+- play state and menu state 
+- menu screen
+- something cool in background of pain menu
+- pause screen
+- options screen / panel accessible in game (from the menu too at some point but not a biggy)
+
+Saving
+- a away to save game progress
+
+
+
+
+
+
+
+
+
+
+Dev Diary 
+ - video entry showing path finding as it is, what it cant do (e.g jump over two wide gaps) (will have to design a map for this)
+ - just get it on GitHub - Thursday 27th.
+ 
+ 
+ Other: 
+ - WEDNESDAY BEFORE WORK: Call Grandad

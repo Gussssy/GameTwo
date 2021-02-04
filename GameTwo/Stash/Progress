@@ -1,0 +1,33 @@
+
+The 4 day weekend: 
+
+Collision Detection: not fixed yet but the fix is pretty much ready to go when i can be bothered
+
+
+Path Finding: Early days but works. Can fins simple paths. As of yet NPCs cannot execute a path. 
+ - finding a path: sort of works, needs to be made better, maybe the first thing to do is enable direction selection but in worst cases this will achive nothing
+ - follwing a path: havent started
+ - automatic target location selection and pathfinding of npcs: should be easy 
+ - stress testing with multiple botbots: cant wait for this
+ 
+ Fighting:
+ - detection of enemies
+ - NPC bullet firing
+ - NPC combat bevahior.. jumping? random left rights...? 
+ - actual dying of NPCs
+ 
+ A different weapon
+ - make a weapon a property of a GameObject and the projectile fired depends on the weapon
+ 	- projectile firing will be done by weapon class/subclass, not by the GameObject class
+ 
+ Last Thing for the weekend: 
+ - BotBot arena battle
+ 
+ 
+ 
+
+
+
+ 
+ 
+

@@ -1,0 +1,88 @@
+How can we make PathFinding Faster
+
+
+Dont look at paths longer then the shortest currently found path: 
+- DONE see below
+
+
+
+
+Further restrict search area
+- have changed search area min and max to +/-3 Tiles from NPC and target location, this may be too small for more complex enviroments
+
+
+
+
+Dont even bother searching for path if the location is unreachable (inside a tile), too high in the air
+- only path find to locations the game has determined is reachable...
+- dont pathfind to impossible locations, easy with solid tiles, hard if in air
+- maybe if location is illegal, try move up out of solid tile or move downb out of the air to a reachable location...
+- or just have a rule that a location has to be ontop of a solid tile and not 
+	- but a 1 tile hole surronded by solids would generate worst case, this is an easy fix but a bit iffy...
+	
+	
+	
+A* ... I think this would be a good idea to make the debugging erasier. Right now even a small path search results in a lot of redundant searching. 
+- in the worst case we will still get this BUT at least there wouldnt be 1 million print statements to filter through
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Dont look at paths longer then the shortest currently found path: 
+- see below
+
+Before:
+
+ Time taken to Path Find: 57308800
+Target Location: TileX = 3, TileY = 3
+PathLength: 27
+Average Duration over 100 tests:  37128329
+
+
+After
+ Time taken to Path Find: 40800
+Target Location: TileX = 3, TileY = 3
+PathLength: 27
+Average Duration over 100 tests:  75028
+
+
+Just after doing this im am pretty satisifed with this speed. It is not generally noticable. 
+- there will be cases when it is noticable but I could make sure these cases arent allowed to happen
+	- e.g limit path finding distance
+	 	- or perform multiple smaller path finds 
+
+1400 times faster in the general case
+- however in worst case, e.g there is no path, just the same
+
