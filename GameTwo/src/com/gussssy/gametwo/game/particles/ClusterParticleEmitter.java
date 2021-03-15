@@ -76,7 +76,7 @@ public class ClusterParticleEmitter extends ParticleEmitter {
 	}
 
 	@Override
-	public void render(GameContainer gc, Renderer r) {
+	public void render(Renderer r) {
 		
 		for(ClusterParticle cp : particles){
 			r.drawImage(cp.getClusterImage(), (int)cp.posX, (int)cp.posY);

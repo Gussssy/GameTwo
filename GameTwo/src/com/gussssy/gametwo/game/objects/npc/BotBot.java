@@ -23,8 +23,6 @@ public class BotBot extends NPC{
 	
 	GameManager gm;
 
-	//private Image botbotImage = new Image("/BotBot1.png");
-	//private Image botbotImage = new Image("/donut.png");
 	private ImageTile botbotTile = Textures.botbotTile;
 	
 
@@ -79,9 +77,10 @@ public class BotBot extends NPC{
 
 	public BotBot(int tileX, int tileY, GameManager gm){
 
-		//super(tileX, tileY, tileX * GameManager.TS, tileY * GameManager.TS, 16, 16, "botbot");
 		this.gm = gm;
 		this.tag = "botbot";
+		
+		// set location
 		this.tileX = tileX;
 		this.tileY = tileY;
 		this.posX = tileX * GameManager.TS;
@@ -89,14 +88,17 @@ public class BotBot extends NPC{
 		offX = 0;
 		offY = 0;
 		
+		// padding and dimensions
 		this.topPadding = 2;
 		this.leftRightPadding = 3;
 		this.width = 16 - 2*leftRightPadding;
 		this.height = 16 - topPadding;
 		
+		// hitbox
 		hitBox = new AABBComponent(this);
 		addComponent(hitBox);
 
+		// ? why is this here
 		this.target = gm.getObject("player");
 		
 		//actionType = NPCActionType.IDLE;
@@ -110,7 +112,7 @@ public class BotBot extends NPC{
 		
 		
 		// Pathing
-		pathRange = 20;
+		pathRange = 20; 
 		
 		//LevelTile targetLocation; 
 
@@ -119,9 +121,7 @@ public class BotBot extends NPC{
 	@Override
 	public void update(GameContainer gc, GameManager gm, float dt){
 		
-		//updateNPC(gc,gm,dt);
 		
-		//System.out.println("botbot health: " + health);
 		
 		//GameManager.debugMessage1 = "BotBot tileX: " + tileX;
 		//GameManager.debugMessage2 = "BotBot tileY: " + tileY;
@@ -134,14 +134,6 @@ public class BotBot extends NPC{
 		//GameManager.debugMessage7 = "BotBot Stuck Right: " + stuckRight;
 		//GameManager.debugMessage9 = "BotBot onGround: " + onGround;
 		
-	/*	if(awareOf.size() != 0){
-			GameManager.debugMessage9 = "BotBot awareOf " + awareOf.get(0).getTag();
-		}else {
-			GameManager.debugMessage9 = "BotBot awareOf nothing";
-		}*/
-		
-		
-		
 		
 		//////////////////////////////////////////////////////////////////////////////////////////
 		//								DECISION MAKING 										//
@@ -153,7 +145,7 @@ public class BotBot extends NPC{
 		
 		switch(actionType){
 		case IDLE:
-			idle(gm);
+			idlePathing(gm);
 			break;
 		case PATH: 
 			path(gc, gm);
@@ -161,23 +153,6 @@ public class BotBot extends NPC{
 		case ATTACK:
 			
 			aggroIdle(gm);
-			
-			// feel like attack could be a whole class of its own, I do not like that I have multiple processes using the same variables so i have to remeber to reset them
-					// howevere thesde processes have so many similarities, they are all Actions/Processes that require path selection, path finding, timing/counting loop repitions to avoid freezing, 
-			//pathToTargetObjectAndAttack(gm);
-			// aggro idle untill find someone
-			// find someone ... if(awaness)
-			//  follow(GameObject) if (!inrange), else follow(GameObject enemy) //follow has 2 second timer, but what is we loose site mid pursuit, I think pusiot shopuld stop
-					// npc in range
-					//   if(tileY == enemyTileY)
-								// face towards enemy. 
-								// stop movement
-								// fire (while above conditions are met)
-			
-			
-			// Where Im at, at the moment
-				// aggoIdle will choose locations, .... 
-			
 			
 		case FOLLOW:
 			break;
@@ -219,11 +194,6 @@ public class BotBot extends NPC{
 		npcWalkingAnimation(dt);
 		
 		
-		
-		
-		
-		
-
 		// updateComponents
 			// health bar
 			// AABBComponent (rect hitbox)
@@ -272,202 +242,181 @@ public class BotBot extends NPC{
 	 *  This is old code used for initial path executing. 
 	 **/
 	private void path(GameContainer gc, GameManager gm){
-		
+
 		// If a target is set, set a path if possible
-				if(targetTileSet){
-					
-					// if a path is not set, set it. 
-					if(!pathSet){
-						
-						//System.out.println("target set but no path, calling path");
-						
-						// Generate a path if possible
-						//path = PathFinder.findPath(gm, this, gm.getLevelTile(targetX/GameManager.TS, targetY/GameManager.TS));
-						//pathFindingInProgress = true;
-						
-						if(pathFindingInProgress == false){
-							
-							// NOPT BELOW LINE: have moved all pathfinding debug to a new class PathFindingTester
-							//gm.setFlagLocation(targetX*16, targetY*16);
-							pathFindingInProgress = true;
-							PathFinderTwo.initPathFinding(gm, tileX, tileY, targetX, targetY);
-							return;
-						}else{
-							
-							if(gc.getInput().isKeyDown(KeyEvent.VK_6)){
-								PathFinderTwo.expandLeastCostNode(gm);
-								
-							}else {
-								return;
-							}
-						}
-						
-						if(pathFindingInProgress)return;
-						
-						
-						
-						//gm.setFlagLocation(targetX*16, targetY*16);
-						//path = PathFinderTwo.findPath(gm, this, tileX, tileY, targetX, targetY);
-						
-						// Was a path found? 
-						if(path != null){
-							
-							// yes, a path was found
-							pathSet = true;
-							System.out.println("Found a path");
-						}else{
-							
-							// no, target location was unreachable
-							targetTileSet = false;
-							System.out.println("Cannot find a path to this target location");
-							
-							// Cancel any movement if a target is set but there is no path
-								// there may be a more logical place to put this
-							movingLeft = false; 
-							movingRight = false; 
-							
-							// This seems logical to remove the target if it is not reachable
-							targetTileSet = false; 
-						}	
-					}	
-				}
-				
-				
-				// Execute the path if it is set
-				if(pathSet){
-					
-					// get the next instruction by updating path
-					//instruction = path.update(); 
-					//System.out.println("Instruction Recieved: " + instruction);
-					
-					// New A* path execution
-					
-					instruction = path.executePath();
-					
-					// cancel any old movement commands
-					movingLeft = false;
-					movingRight = false;
-					willJump = false;
-					
-					// Execute the instruction
-					// in some cases this can be called when instruction is null. Neeed to sort this soon. 25/08
-					switch(instruction){
-					case "up":
-						willJump = true;
-						break;
-					case "down":
-						/// hmmmm what goes here
-						break;
-					case "left":
-						movingLeft = true;
-						break;
-					case "stopLeft":
-						movingLeft = false;
-						break;
-					case "stopRight":
-						movingRight = false;
-						break;
-					case "right":
-						movingRight = true;
-						break;
-					case "wait":
-						movingRight = false;
-						movingLeft = false;
-						break;
-					case "recalculate": 
-						pathSet = false;
-						break;
-					case "stop": 
-						System.out.println("Movement was stopped in stop case");
-						targetTileSet = false; 
-						pathSet = false;
-						movingLeft = false;
-						movingRight = false;
-						break;
+		if(targetTileSet){
+
+			// if a path is not set, set it. 
+			if(!pathSet){
+
+				//System.out.println("target set but no path, calling path");
+
+				// Generate a path if possible
+				//path = PathFinder.findPath(gm, this, gm.getLevelTile(targetX/GameManager.TS, targetY/GameManager.TS));
+				//pathFindingInProgress = true;
+
+				if(pathFindingInProgress == false){
+
+					// NOPT BELOW LINE: have moved all pathfinding debug to a new class PathFindingTester
+					//gm.setFlagLocation(targetX*16, targetY*16);
+					pathFindingInProgress = true;
+					PathFinderTwo.initPathFinding(gm, tileX, tileY, targetX, targetY);
+					return;
+				}else{
+
+					if(gc.getInput().isKeyDown(KeyEvent.VK_6)){
+						PathFinderTwo.expandLeastCostNode(gm);
+
+					}else {
+						return;
 					}
-					
 				}
+
+				if(pathFindingInProgress)return;
+
+
+
+				//gm.setFlagLocation(targetX*16, targetY*16);
+				//path = PathFinderTwo.findPath(gm, this, tileX, tileY, targetX, targetY);
+
+				// Was a path found? 
+				if(path != null){
+
+					// yes, a path was found
+					pathSet = true;
+					System.out.println("Found a path");
+				}else{
+
+					// no, target location was unreachable
+					targetTileSet = false;
+					System.out.println("Cannot find a path to this target location");
+
+					// Cancel any movement if a target is set but there is no path
+					// there may be a more logical place to put this
+					movingLeft = false; 
+					movingRight = false; 
+
+					// This seems logical to remove the target if it is not reachable
+					targetTileSet = false; 
+				}	
+			}	
+		}
+
+
+		// Execute the path if it is set
+		if(pathSet){
+
+			// get the next instruction by updating path
+			//instruction = path.update(); 
+			//System.out.println("Instruction Recieved: " + instruction);
+
+			// New A* path execution
+
+			pathInstruction = path.executePath();
+
+			// cancel any old movement commands
+			movingLeft = false;
+			movingRight = false;
+			willJump = false;
+
+			// Execute the instruction
+			// in some cases this can be called when instruction is null. Neeed to sort this soon. 25/08
+			switch(pathInstruction){
+			case "up":
+				willJump = true;
+				break;
+			case "down":
+				/// hmmmm what goes here
+				break;
+			case "left":
+				movingLeft = true;
+				break;
+			case "stopLeft":
+				movingLeft = false;
+				break;
+			case "stopRight":
+				movingRight = false;
+				break;
+			case "right":
+				movingRight = true;
+				break;
+			case "wait":
+				movingRight = false;
+				movingLeft = false;
+				break;
+			case "recalculate": 
+				pathSet = false;
+				break;
+			case "stop": 
+				System.out.println("Movement was stopped in stop case");
+				targetTileSet = false; 
+				pathSet = false;
+				movingLeft = false;
+				movingRight = false;
+				break;
+			}
+
+		}
 	}
 
 	
 	@Override
-	public void render(GameContainer gc, Renderer r){
+	public void render(Renderer r){
 
-		
-		// Not animated
+		// Not animated - old. 
 		//r.drawImage(botbotImage, (int)posX, (int)posY);
 		
-		// Animated
+		// Animated - new and will likely keep it this way. Animation may be a bit much.
 		r.drawImageTile(botbotTile, (int)posX, (int)posY, (int)animationState,  direction);
 		
+		// Draw a light around botbot. 
 		r.drawLight(light, (int)posX+14, (int)posY+14);
 		
+		// Render a flag representing botbots target location. IF a target is set. 
 		if(targetTileSet){
 			r.drawImage(flag, targetX, targetY);
 		}
 		
-		this.renderComponents(gc, r);
+		
+		// Render Components
+		this.renderComponents(r);
+		
+		// Render Debug info relevant to this botbot
+		if(GameManager.showDebug){
+			renderPath(r);
+			vision.renderVision(r);
+			
+		}
 
 	}
 
 	
-	int[] incursions = new int[4];
-	int smallestIndex;
-	int botIncursion, topIncursion, leftIncursion, rightIncursion;
+	
 	
 	
 	@Override
 	public void collision(GameObject other, AABBComponent otherHitBox){
 		
-		
+		// Platform Collision
 		if(other.getTag() == "platform"){
 			
-			collisionHandler.collisionWithStationaryObject(other, otherHitBox);
-			
+			collisionHandler.collisionWithStationaryObject(other, otherHitBox);		
 		}
 		
-		
-		
-		
-		/**
-		 * Bullet Collison 
-		 **/
-		if(other.getTag().equals("bullet")){
-
-
-			if(((Bullet)other).getWeapon().getWielder().getTag() != tag){
-				// bullet was fired by npc of a different type
-			}else{
-
-				// dw just friendly fire, ignore this bullet
-				return; 
-			}
-
-			// I really hate how this work, finding components in this way seems very silly
-			// i almost think they way im using compnents is mostly redundant, only hit boxes need to be updated each update, the rest can wait wait till envoked....
-
-			HealthBar hp = (HealthBar)this.findComponent("hp");
-			//System.out.println("healthPixels before" + hp.getHealthPixels());
-
-
-			//System.out.println("Bullet Hit Bot Bot");
-			//System.out.println("Was the bullet dead? " + other.isDead());
-			//hurt.play();
-			//System.out.println();
-			hp.healthChanged(-10);
-
-			if(health < 0){
-				SoundManager.dead.play();
-				hp.healthChanged(100);
-			}
-
-		}
+		// BotBot collides with various projectiles as well but that is managed by the Projectile classes. 
+		 
+	
 
 	}
 
 	
 	
-	
+	/**
+	 * Sets a target location for botbot to path too.
+	 * <p>
+	 * This is old code but may be used again in the future. Keeping for now.
+	 *  
+	 */
 	public void setTargetLocation(int targetX, int targetY){
 		this.targetX = targetX;
 		this.targetY = targetY;
@@ -476,6 +425,10 @@ public class BotBot extends NPC{
 		actionType = NPCActionType.PATH;	
 	}
 
+	
+	/**
+	 * Old code, will be reworked soon. 7/3/21 
+	 */
 	@Override
 	protected void attack(GameManager gm, int direction) {
 		weapon.useWeapon(gm, direction);

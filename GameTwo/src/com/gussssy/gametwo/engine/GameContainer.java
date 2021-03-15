@@ -5,7 +5,7 @@ import java.awt.event.KeyEvent;
 /**
  * GameContainer. 
  * 
- * Contains the GameLoop that tells the Game to update and render.   
+ * Contains the GameLoop that tells the Game to update and render 60 times per second.   
  **/
 public class GameContainer implements Runnable{
 
@@ -20,6 +20,8 @@ public class GameContainer implements Runnable{
 	private boolean efficiencyTestMode = false;
 	private boolean testUpdates = false; //not sure this actually gives correct updates, I feel it must be the same as frames.... and its not. 
 	private boolean printFPS = false;
+	
+	// Timers for testing render and update time 
 	//private Timer renderTimer = new Timer("\t\t\tRender");
 	//private Timer updateTimer = new Timer("Update");
 
@@ -55,9 +57,17 @@ public class GameContainer implements Runnable{
 
 	}
 
+	/**
+	 * Starts the game loop which will continue to run untill the game terminates. 
+	 * 
+	 * This method will continue to run untill the game terminates. 
+	 */
 	public void run(){
+		
+		// Set running to true to start the game loop
 		running = true;
 
+		// time variables
 		double firstTime = 0;
 		double lastTime = System.nanoTime() / 1000000000.0;
 		double passedTime = 0;
@@ -74,10 +84,12 @@ public class GameContainer implements Runnable{
 		
 		int testCounter = 0;
 		
-		
+		// Perform any setup on the game that had to occur after the game has finished construction
 		game.init(this);
 
 
+		
+		// GAME LOOP 
 		while(running){
 
 
@@ -86,8 +98,6 @@ public class GameContainer implements Runnable{
 				render = false;
 			}
 			
-
-
 
 			firstTime = System.nanoTime() / 1000000000.0; 	//get the current time 
 			passedTime = firstTime - lastTime;				//determine time passed since last iteration
@@ -107,26 +117,22 @@ public class GameContainer implements Runnable{
 				//UPDATE GAME
 				if(!paused){
 					
-					//updateTimer.startTime();
-					
 					// update the game
-					//System.out.println("is w down? " + input.isKeyDown(KeyEvent.VK_W));
 					game.update(this, (float)UPDATE_CAP);
-					//testCounter++;
-					//System.out.println("\nCounter: " + testCounter);
 					
-					//updateTimer.endTime();
-					
-					
+				// If the game is paused, execute a single frame when '1' is pressed	
 				}else if(input.isKeyDown(KeyEvent.VK_1)){
-					// Game is paused
-					// Update for 1 frame
+					
+					// Game is currently paused, perform a single update
 					game.update(this, (float)UPDATE_CAP);
 				}
 				
 				
+				// Increment updates if testing max updates possible
 				if(testUpdates)updates++;
-				// Toggle Pause if user presses 'P' - will pause on next frame not current frame... is this a problem ? 
+				
+				
+				// Toggle Pause if user presses 'P'
 				if(getInput().isKeyDown(KeyEvent.VK_P)){
 					if(paused == false) {
 						paused = true;
@@ -136,6 +142,7 @@ public class GameContainer implements Runnable{
 				}
 				
 				
+				// Testing occasional missed input bug
 				// there could be an issue here. sometimes input registers 'w' pushed but a player jump does not happen
 				input.update(testCounter);
 				
@@ -145,7 +152,7 @@ public class GameContainer implements Runnable{
 				if(frameTime >= 1.0)
 				{
 					
-					//Determines max possible frame rendering for efficiency testing purposes
+					//Determines max possible frame renders for efficiency testing purposes
 					if(efficiencyTestMode)
 					{
 						accumulatedFrames += frames;
@@ -153,10 +160,14 @@ public class GameContainer implements Runnable{
 						getAverageMaxFrames(accumulatedFrames, numSeconds);
 					}
 					
+					// Record frames that have occured in the last second
 					frameTime = 0;
 					fps = frames;
 					frames = 0;
+					
+					// print fps to console
 					if(printFPS)System.out.println("fps: "+fps);
+					
 					
 					if(testUpdates)
 					{
@@ -176,8 +187,8 @@ public class GameContainer implements Runnable{
 				renderer.process();
 				//renderTimer.endTime();
 				
+				// draws the fps count in the top left of the screen
 				renderer.drawText("FPS: "+ fps, renderer.getCamX() , renderer.getCamY(), 0xffffffff);
-				//renderer.drawText("A B C D E F G H I J K L M N O P", 0, 0, 0xff00ffff);
 				
 				window.update();
 				

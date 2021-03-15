@@ -118,12 +118,12 @@ public class Bullet extends GameObject{
 	}
 
 	@Override
-	public void render(GameContainer gc, Renderer r){
+	public void render(Renderer r){
 		
 		//r.drawFillRect((int)posX, (int)posY, width, height, 0xff0000ff);
 		r.drawImage(bulletImage, (int)posX, (int)posY);
 		
-		this.renderComponents(gc, r);
+		this.renderComponents(r);
 		
 		
 	}

@@ -30,6 +30,8 @@ public abstract class Charachter extends GameObject {
 	public float fallDistance = 0;		
 	public float gravity = 10;
 	public float jump = -4;
+	public float smallJump = -3;
+	public float regularJump = -4;
 	public boolean onGround = false;
 	
 	
@@ -90,7 +92,6 @@ public abstract class Charachter extends GameObject {
 	
 	
 	public Charachter(){
-		collisionType = CollisionType.CHARACHTER;
 		
 		// set up health bar
 		addComponent(healthBar);

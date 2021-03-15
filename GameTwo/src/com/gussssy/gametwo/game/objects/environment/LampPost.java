@@ -34,7 +34,7 @@ public class LampPost extends GameObject {
 	}
 
 	@Override
-	public void render(GameContainer gc, Renderer r) {
+	public void render(Renderer r) {
 		
 		r.drawImage(image, x, y);
 		r.drawLight(light, x + 3, y + 6);

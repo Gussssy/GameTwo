@@ -24,7 +24,7 @@ public class NPCVision {
 	ArrayList<GameObject> inVision = new ArrayList<GameObject>();
 
 	// Enemies the npc can see
-	public ArrayList<GameObject> enemiesInVision = new ArrayList<GameObject>();
+	private ArrayList<GameObject> enemiesInVision = new ArrayList<GameObject>();
 
 	// The GameObjects the npc is in range for detection but may not be in vision
 	ArrayList<GameObject> inRange = new ArrayList<GameObject>();
@@ -38,11 +38,9 @@ public class NPCVision {
 
 
 	/**
-	 * NPCVision constructor.
-	 * 
-	 *  Takes as input the NPC.
+	 * NPCVision constructor. Creates a new NPCVision object that will detect other units in vision of the given NPC. 
 	 *  
-	 *  Then takes the detection range from the npc.
+	 *  @param npc The NPC this class will give vision too.
 	 **/
 	public NPCVision(NPC npc){
 
@@ -54,9 +52,9 @@ public class NPCVision {
 	/**
 	 * Updates what objects/charachters the NPC can see.
 	 * - finds all npcs within the npcs detection range
-	 * - then tests if these npcs are in vision 
+	 * - then tests if these npcs are in vision e.g there is not solid terrain blocking vision
 	 **/
-	void updateVision(GameManager gm){
+	public void updateVision(GameManager gm){
 
 		// clear lists from last update
 		inVision.clear();
@@ -479,10 +477,10 @@ public class NPCVision {
 	 * 
 	 * If there is one or more enemies in vision, returns the first enemy GameObject from the list.
 	 * 
-	 * In the furture: would like a better system then this. Maybe try find the closest enemy. Or perhaps an army will share awareness...
+	 * In the future: would like a better system then this. Maybe try find the closest enemy. Or perhaps an army will share awareness...
 	 * 
 	 **/
-	public Optional<GameObject> selectTargetEnemy(){
+	public Optional<GameObject> getTargetEnemy(){
 
 		// if there are no enemies in vision, return null.
 		if(enemiesInVision.isEmpty()){
@@ -494,11 +492,36 @@ public class NPCVision {
 
 	}
 
+	
+	
+	
+	/**
+	 * 
+	 */
+	public boolean isEnemyInVision(){
+		
+		if(enemiesInVision.isEmpty()){
+			return false;
+			
+		}else {
+			return true;
+		}
+		
+	}
+	
+	
+	
 
+	/***
+	 * When Debug is active, draws lines between the NPC and other units that are within the detection range. 
+	 * <ul>
+	 * <li> A blue line indicates other unit is in range but no vision, there is terrain blocking vision
+	 * <li> A green line indicates the other unit is both in range and in vision.
+	 * </ul>
+	 */
+	public void renderVision(Renderer r){
 
-	void renderAwareness(Renderer r){
-
-		if(DebugPanel.showAwareness){
+		if(DebugPanel.showVision){
 
 			for(GameObject o : inRange){
 				r.drawLine((int)(npc.getPosX() + GameManager.TS/2), (int)(npc.getPosY() + npc.getTopPadding() + 3 ), (int)(o.getPosX()+GameManager.TS/2), (int)(o.getPosY() + 3), 0xff0000ff);

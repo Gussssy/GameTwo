@@ -21,36 +21,30 @@ import com.gussssy.gametwo.game.weapon.Pistol;
 
 public class Player extends Charachter{
 
-	// Location variables
-	//private int tileX, tileY;	// in GameObject
-	//private float offX, offY;	// in GameObject
-
-	// Movement variables ALL MOVED TO CHARACHTRER
-	//private float speed = 100;		moved to charachter
-	//private float fallDistance = 0;		
-	//private float gravity = 10;
-	//private float jump = -4;
-	//private float jump = -6;
-
-	// platform collision variables
-	//boolean onGround = false;			// moved to chartachter
-	//boolean onAABB = false;
-	//AABBComponent onThisObject = null;
-
+	
 	// This is player specific
 	public boolean hasBoost = false;
 	public float boostSpeed = -2;
 	//private float boostSpeed = -10;
 	
-	// Player Movement for normal, water and free movement
+	
+	
+	// Various player movements: 
+	
+	// Controls player movement under normal circumstances
 	PlayerMovementBasic playerMovement;
+	
+	// Controls player movement when in water
 	PlayerMovementWater waterMovement;
+	
+	// Controls player movement when freeMovement is enabled. Player will move much faster and no longer be effected by gravity and collisions.
 	PlayerFreeMovement freeMovement;
 	
-	public boolean freeMovementEnabled = false;
+	// when true, free movement will be enabled
+	private boolean freeMovementEnabled = false;
 
 
-	// Animation variables
+	// The Players Texture
 	private ImageTile playerImage = Textures.playerTile;
 
 	
@@ -63,7 +57,7 @@ public class Player extends Charachter{
 	//private Spell1 spell = new Spell1(this);
 	//private Spell2 spell = new Spell2(this);
 	//private Spell3 spell = new Spell3(this);
-	private IceShardSpell spell = new IceShardSpell(this);
+	private IceShardSpell spell;
 	
 	
 	// LIGHT
@@ -96,10 +90,9 @@ public class Player extends Charachter{
 		this.width = GameManager.TS - (leftRightPadding *2);
 		this.height = GameManager.TS - topPadding;
 
-		// set AABB for collision detection
+		// Initialize the players hit-box for collision detection
 		hitBox = new AABBComponent(this);
-		hitBox.particleCollisionDetectionEnabled = true;
-		this.addComponent(hitBox);				// set players AABB 
+		this.addComponent(hitBox);
 
 		
 		// set object type 
@@ -122,6 +115,7 @@ public class Player extends Charachter{
 		
 		
 		// add spell
+		spell = new IceShardSpell(this);
 		addComponent(spell);
 		
 		
@@ -135,7 +129,7 @@ public class Player extends Charachter{
 	@Override
 	public void update(GameContainer gc, GameManager gm, float dt){
 		
-		DebugPanel.message1 = "Player tileX: " +  tileX;
+		//DebugPanel.message1 = "Player tileX: " +  tileX;
 
 		if(freeMovementEnabled){
 			
@@ -830,12 +824,12 @@ public class Player extends Charachter{
 	
 
 	@Override
-	public void render(GameContainer gc, Renderer r){
+	public void render(Renderer r){
 
 		r.drawImageTile(playerImage, (int)posX, (int)posY, (int)animationState, direction);
 		r.drawLight(playerLight, (int)posX, (int)posY);
 
-		this.renderComponents(gc, r);
+		this.renderComponents(r);
 
 	}
 	
@@ -902,6 +896,26 @@ public class Player extends Charachter{
 
 	public int getTileY() {
 		return tileY;
+	}
+
+
+
+
+	/**
+	 * @param freeMovementEnabled the freeMovementEnabled to set
+	 */
+	public void setFreeMovementEnabled(boolean freeMovementEnabled) {
+		this.freeMovementEnabled = freeMovementEnabled;
+	}
+
+
+
+
+	/**
+	 * @return the freeMovementEnabled
+	 */
+	public boolean isFreeMovementEnabled() {
+		return freeMovementEnabled;
 	}
 
 

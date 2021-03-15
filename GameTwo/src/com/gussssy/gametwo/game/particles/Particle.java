@@ -18,7 +18,7 @@ public abstract class Particle {
 	protected int tileX;
 	protected int tileY;
 	
-	// Speed Variables - not used atm 6/12
+	// Speed Variables 
 	protected float vx,vy;
 	
 	//
@@ -26,6 +26,9 @@ public abstract class Particle {
 	
 	/***
 	 * Particle update 
+	 * 
+	 * Note: This is the only update method in the game with this signature (does not include the GameContainer)
+	 * is this ok? 
 	 **/
 	public abstract void update(GameManager gm, float dt);
 

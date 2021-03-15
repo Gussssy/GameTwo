@@ -138,16 +138,16 @@ public class PlayerMovementWater {
 		if(gc.getInput().isKey(KeyEvent.VK_A)){
 			// left walking animation 
 			player.setDirection(1);
-			player.animationState += dt * player.animationSpeed;
-			if(player.animationState > 4)player.animationState = 0;
+			player.setAnimationState(player.getAnimationState() + dt * player.getAnimationSpeed());
+			if(player.getAnimationState() > 4)player.setAnimationState(0);
 		} else if(gc.getInput().isKey(KeyEvent.VK_D)){
 			// right walking animation
 			player.setDirection(0);
-			player.animationState += dt * player.animationSpeed;
-			if(player.animationState > 4)player.animationState = 0;
+			player.setAnimationState(player.getAnimationState() + dt * player.getAnimationSpeed());
+			if(player.getAnimationState() > 4)player.setAnimationState(0);
 		} else {
 			// stationary 
-			player.animationState = 0;
+			player.setAnimationState(0);
 		}
 
 
@@ -334,7 +334,7 @@ public class PlayerMovementWater {
 
 		// animating jump / falling
 		if(player.fallDistance > 1){
-			player.animationState = 1; 
+			player.setAnimationState(1); 
 		}
 
 

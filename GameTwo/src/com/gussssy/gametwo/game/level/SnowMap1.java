@@ -30,19 +30,31 @@ public class SnowMap1 extends Level implements TimeObserver{
 		// Spawners
 		NPCSpawner botbotSpawner = new NPCSpawner(9,42, "botbot");
 		botbotSpawner.setMaxSpawns(15);
-		gm.addObject(botbotSpawner);
+		//gm.addObject(botbotSpawner);
+		
+		// 
 		NPCSpawner smartbotSpawner = new NPCSpawner(10,42, "smartbot");
 		smartbotSpawner.setMaxSpawns(15);
-		gm.addObject(smartbotSpawner);
+		//gm.addObject(smartbotSpawner);
+		
+		//
+		NPCSpawner wizardSpawner = new NPCSpawner(11,42, "ice_wizard");
+		wizardSpawner.setMaxSpawns(2);
+		gm.addObject(wizardSpawner);
 		
 		
+		// 
 		NPCSpawner badbotSpawner = new NPCSpawner(130,33, "badbotbot");
 		badbotSpawner.setMaxSpawns(15);
-		gm.addObject(badbotSpawner);
+		//gm.addObject(badbotSpawner);
 		
 		NPCSpawner badSmartBotSpawner = new NPCSpawner(131,33, "badsmartbot");
-		badSmartBotSpawner.setMaxSpawns(15);
+		badSmartBotSpawner.setMaxSpawns(2);
 		gm.addObject(badSmartBotSpawner);
+		
+		// 
+		
+		
 		
 		// PathMap
 		PathFinderTwo.setPathMap(gm, 9, 42);
@@ -71,7 +83,7 @@ public class SnowMap1 extends Level implements TimeObserver{
 		weather.update(gc, gm, dt);
 		
 		/// update day/night
-		cycle.update();
+		//cycle.update();
 		
 	}
 

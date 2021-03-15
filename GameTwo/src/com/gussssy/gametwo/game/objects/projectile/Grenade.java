@@ -16,6 +16,8 @@ import com.gussssy.gametwo.game.physics.Physics;
 
 public class Grenade extends Projectile implements ExplosiveObject{
 
+	private boolean print = false;
+	
 	// The grenade image, have another option in resources
 	private ImageTile grenadeTileImage = new ImageTile("/grenade1.png", 6,6);
 
@@ -48,7 +50,7 @@ public class Grenade extends Projectile implements ExplosiveObject{
 	static int maxBeeps = 30;
 	
 	public static boolean sound = true;
-	private boolean print = false;
+	
 	
 	float preCollX, preCollY;
 	
@@ -174,7 +176,7 @@ public class Grenade extends Projectile implements ExplosiveObject{
 	 * GRENADE RENDER 
 	 **/
 	@Override
-	public void render(GameContainer gc, Renderer r) {
+	public void render(Renderer r) {
 
 		
 		
@@ -191,11 +193,11 @@ public class Grenade extends Projectile implements ExplosiveObject{
 			if(GameManager.showDebug)r.drawRect((int)preCollX, (int)preCollY, width, height, 0xffffffff);
 			
 			//render components
-			renderComponents(gc, r);
+			renderComponents(r);
 
 			// render the temporary tile hitbox
 
-			if(tileHitBox1 != null)tileHitBox1.render(gc,r);
+			if(tileHitBox1 != null)tileHitBox1.render(r);
 			//System.out.println("rendering tileHitBox1 at: x = " + tileHitBox1.getStartX() + ", y = " + tileHitBox1.getStartY());
 
 

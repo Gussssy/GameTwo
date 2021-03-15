@@ -3,77 +3,107 @@ package com.gussssy.gametwo.game.objects.npc;
 import com.gussssy.gametwo.engine.GameContainer;
 import com.gussssy.gametwo.engine.Renderer;
 import com.gussssy.gametwo.engine.gfx.ImageTile;
+import com.gussssy.gametwo.game.EventManager;
 import com.gussssy.gametwo.game.GameManager;
+import com.gussssy.gametwo.game.Textures;
 import com.gussssy.gametwo.game.components.AABBComponent;
 import com.gussssy.gametwo.game.objects.GameObject;
+import com.gussssy.gametwo.game.particles.TileDestruction;
+import com.gussssy.gametwo.game.pathfinding.PathFinderTwo;
 
+/**
+ * A relatively fast moving NPC.
+ * <p>
+ * Currently does not have any attacking ability.
+ * <p>
+ * Can destroy the block beneath it after completing a path (if enabled)
+ */
 public class Rabbit extends NPC {
 	
-	// Witrhout standing 2 frame walk
-	//private ImageTile rabbitImage = new ImageTile("/character/rabbit1.png",32,27);
 	
-	// With standing and 2 frame walk
-	//private ImageTile rabbitImage = new ImageTile("/character/rabbit1_standing.png",32,32);
+	// Rabbit Texture (TileImage)
+	// 		(With a standing frame and 3 frames for walking)
+	private ImageTile rabbitImage = Textures.rabbitTile;
 	
-	// With standing and 2 frame walk
-	private ImageTile rabbitImage = new ImageTile("/character/rabbit1_4frames.png",32,32);
-	
-	
+	// Because rabbits are being treated as if they were 16*16 pixels whereas they are actually 32*32, the Image is rendered too high. This corrects that.
 	private int imageOffY = 16;
 	
+	// Controls whether or not rabbits destroy the tile below them after finishing a path.
+	private boolean dig = false;
 	
+	
+	/**
+	 * Constructs a new rabbit at the specified tile location.
+	 * 
+	 *  @param tileX the x coordinate location of the tile that rabbit will spawn on.
+	 *  @param tileY the y coordinate location of the tile that rabbit will spawn on.
+	 */
 	public Rabbit(int tileX, int tileY){
 		
 		this.tag = "rabbit";
 		
+		// set the spawn location.
 		this.tileX = tileX;
 		this.tileY = tileY;
+		
+		// set posX to reflect tile location
 		this.posX = tileX*GameManager.TS;
 		this.posY = tileY*GameManager.TS;
 		
 		// animation
-		frames = 3;
+		animationFrames = 3;
 		
 		
+		// apply padding.
 		this.topPadding = 2;
 		this.leftRightPadding = 3;
 		this.width = 16 - 2*leftRightPadding;
 		this.height = 16 - topPadding;
 		
+		// Super jumps
 		//jump = -10;
+		
+		// Sets rabbit speed, faster then most NPCs
 		speed = 150;
 		
-		// hitbox
+		// Initialize hit-box and add to the components list
 		hitBox = new AABBComponent(this);
 		addComponent(hitBox);
 		
+		// Rabbits belong on the 'good' team
 		team = 0;
-		
-		
-		
 	}
 
+	
+	
+	
 	@Override
 	protected void attack(GameManager gm, int direction) {
 		// TODO Auto-generated method stub
 
 	}
 
+	
+	
+	
 	@Override
 	public void update(GameContainer gc, GameManager gm, float dt) {
-		// TODO Auto-generated method stub
 		
 		
 		
+		// Destroy the tile below the rabbit after completing a path, if digging is enabled. 
+		if(pathingComplete && dig){
+			
+			EventManager.addEvent(new TileDestruction(gm.getLevelTile(tileX, tileY+1)));
+			pathingComplete = false;
+			PathFinderTwo.setPathMap(gm, tileX, tileY);
+		}
+		
 
-		// Vision / Awareness
-		// ...
-
-
-		// Decsion Making
+		// Behavior determined by NPCs current ActionType
 		switch(actionType){
 		case IDLE:
-			idle(gm);
+			idlePathing(gm);
 			break;
 		case PATH: 
 			break;
@@ -89,35 +119,37 @@ public class Rabbit extends NPC {
 		}
 
 
-		// Movement
+		// Apply movement commands
 		npcMovement(gc, gm, dt);
+		
+		// Animating movement
 		npcWalkingAnimation(dt);
 
 		// General NPC update
 		npcUpdate(gc, gm, dt);
 		
-		
-
-		
-
 	}
 
 	@Override
-	public void render(GameContainer gc, Renderer r) {
-		
-		//System.out.println("Rabbit render: animationState = " + animationState);
-		
-		// temporary avoidd first frame when moving
-		//animationState +=1;
+	public void render(Renderer r) {
 		
 		if(waiting){
 			animationState = -1;
 		}
 		
-		r.drawImageTile(rabbitImage, (int)posX, (int)posY - imageOffY, (int)animationState+1
-				, direction);
+		r.drawImageTile(rabbitImage, (int)posX, (int)posY - imageOffY, (int)animationState+1, direction);
 		
-		renderComponents(gc,r);
+		renderComponents(r);
+		
+		
+		// render path if debug panel is active
+		if(GameManager.showDebug){
+			renderPath(r);
+			vision.renderVision(r);
+			
+		}
+			
+		
 
 	}
 

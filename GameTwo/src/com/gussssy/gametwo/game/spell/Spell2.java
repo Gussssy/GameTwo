@@ -106,7 +106,7 @@ public class Spell2 extends Spell {
 	}
 
 	@Override
-	public void render(GameContainer gc, Renderer r) {
+	public void render(Renderer r) {
 
 		for(Particle p : particles){
 

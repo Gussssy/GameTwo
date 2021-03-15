@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * A class to hold a collection of related sounds that can be played in order. 
+ * A class to hold a collection of related sounds to simplify playing a variety of different sounds for a recurring event. 
  **/
 public class SoundClipSet {
 	
@@ -14,14 +14,14 @@ public class SoundClipSet {
 	private int count = 0;
 
 	
+	
+	/**
+	 *  Creates a new empty SoundClipSet
+	 */
 	public SoundClipSet(){
 		
 	}
 	
-	// Required if continuolusly playing
-	public void update(){
-		
-	}
 	
 	
 	/**
@@ -55,7 +55,7 @@ public class SoundClipSet {
 		
 		
 		if(sounds.size() > count){
-			System.out.println("Playing sound at postion: " + count);
+			//System.out.println("Playing sound at postion: " + count);
 			sounds.get(count).play();
 			
 			
@@ -64,7 +64,7 @@ public class SoundClipSet {
 			// return count to 0 and play the first sound
 			count = 0;
 			sounds.get(count).play();
-			System.out.println("Playing sound at postion: " + count);
+			//System.out.println("Playing sound at postion: " + count);
 		}
 		
 		//increment count to play next sound in the list, next time this method is called
@@ -78,8 +78,9 @@ public class SoundClipSet {
 	public void playRandom(){
 		
 		int x  = ThreadLocalRandom.current().nextInt(0, sounds.size());
-		System.out.println("Random Index for sound: " + x + "\n\t(should be 0, 1, 2)");
+		//System.out.println("Random Index for sound: " + x + "\n\t(should be 0, 1, 2)");
 		
+		sounds.get(x).stop();
 		sounds.get(x).play();
 		
 	}

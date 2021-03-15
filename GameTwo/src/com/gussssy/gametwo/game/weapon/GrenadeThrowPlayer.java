@@ -84,7 +84,7 @@ public class GrenadeThrowPlayer extends Weapon {
 	}
 
 	@Override
-	public void render(GameContainer gc, Renderer r) {
+	public void render(Renderer r) {
 		// TODO Auto-generated method stub
 		
 	}

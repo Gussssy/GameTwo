@@ -127,11 +127,11 @@ public class TestObject extends GameObject {
 	}
 
 	@Override
-	public void render(GameContainer gc, Renderer r) {
+	public void render(Renderer r) {
 
 		r.drawImage(img, (int)posX, (int)posY);
 
-		this.renderComponents(gc, r);
+		this.renderComponents(r);
 
 	}
 

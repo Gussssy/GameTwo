@@ -20,6 +20,9 @@ import com.gussssy.gametwo.game.particles.SnowEmitter;
  **/
 public class IceShard extends Projectile {
 
+	// controls printing of info for debugging
+	private boolean print = false;
+	
 	// the GameObject that cast the spel and spawned this ice shard
 	private GameObject caster;
 
@@ -40,8 +43,6 @@ public class IceShard extends Projectile {
 	private boolean recalling = false;
 	private boolean returned = false;
 
-	// remove this, temporary workaround of sound limits
-	//SoundClip iceBreak1 = new SoundClip("/audio/ice_break_1.wav");
 
 	// The total velocity ice shards will have when released, split between x and y axis.
 	private float velocity = 400;
@@ -49,7 +50,7 @@ public class IceShard extends Projectile {
 	// integers used to determine direction of the ice shard when released
 	int mouseX, mouseY, camX, camY, casterX, casterY;
 
-	// Don't need a seperate snowEWmiiter for each ice shard
+	// Don't need a seperate snowEWmiiter for each ice shard, can be in ParticleManager
 	SnowEmitter snowMaker = new SnowEmitter();
 
 
@@ -58,8 +59,8 @@ public class IceShard extends Projectile {
 	//private int snowFlakeInterval = 0;	// wont need this? 
 
 	double radians = 0.0;
-	
-	
+
+
 	// temp testing
 	private boolean recallCollision = true;
 
@@ -72,7 +73,7 @@ public class IceShard extends Projectile {
 		this.posY = caster.getPosY() + offSetY;
 		this.offSetX = offSetX;
 		this.caster = caster;
-		
+
 		this.tag = "ice_shard";
 
 		// hitbox
@@ -87,8 +88,8 @@ public class IceShard extends Projectile {
 		snowMaker.maxVy = 10;
 		snowMaker.minVy = 5;
 
-		
-		
+
+
 
 
 
@@ -119,6 +120,8 @@ public class IceShard extends Projectile {
 			posX = caster.getPosX() + offSetX;
 			posY = caster.getPosY() + offSetY;
 
+
+			// emission of snow flakes
 			if(snowFlakeTimer == 0){
 				snowMaker.emitParticle(posX + rotationX + 5, posY + rotationY + 5);
 				snowFlakeTimer = ThreadLocalRandom.current().nextInt(10, 60);
@@ -139,8 +142,8 @@ public class IceShard extends Projectile {
 			// tile collison check
 			if(gm.getLevelTileCollision((int)(posX/GameManager.TS), (int)(posY/GameManager.TS))){
 
-				System.out.println("\nIceShard has stopped releasing movement");
-				System.out.println("\t Hit tile: x = " + (int)posX/GameManager.TS + ", y = " + (int)posY/GameManager.TS);
+				if(print)System.out.println("\nIceShard has stopped releasing movement");
+				if(print)System.out.println("\t Hit tile: x = " + (int)posX/GameManager.TS + ", y = " + (int)posY/GameManager.TS);
 				waitingForRecall = true;
 				releasing = false;
 			}
@@ -157,7 +160,7 @@ public class IceShard extends Projectile {
 		}else if(recalling){
 
 			recallShard(gm);
-			
+
 			posX += dt*vx;
 			posY += dt*vy;
 
@@ -167,8 +170,8 @@ public class IceShard extends Projectile {
 			// tile collision check
 			if(gm.getLevelTileCollision((int)(posX/GameManager.TS), (int)(posY/GameManager.TS)) && recallCollision){
 
-				System.out.println("\nIceShard has stopped recalling movement");
-				System.out.println("\t Hit tile: x = " + (int)posX/GameManager.TS + ", y = " + (int)posY/GameManager.TS);
+				if(print)System.out.println("\nIceShard has stopped recalling movement");
+				if(print)System.out.println("\t Hit tile: x = " + (int)posX/GameManager.TS + ", y = " + (int)posY/GameManager.TS);
 				returned = true;
 				recalling = false;
 				//iceBreak1.play();
@@ -179,8 +182,8 @@ public class IceShard extends Projectile {
 
 			// after x amount of time this iceshard will be removed
 		}
-		
-		
+
+
 		//components
 		updateComponents(gc,gm,dt);
 
@@ -188,10 +191,14 @@ public class IceShard extends Projectile {
 	}
 
 
+
+
 	/**
-	 * Setup Iceshard to be released. 
+	 * Releases this IceShard from above the player, towards the cursor.
+	 * 
+	 * This is only for when the player casts the IceShardSpell. 
 	 */
-	public void releaseShard(GameManager gm, GameContainer gc){
+	public void releaseShardTowardsCursor(GameManager gm, GameContainer gc){
 
 		// set booleans to move ice spell into release phase
 		charging = false;
@@ -202,7 +209,7 @@ public class IceShard extends Projectile {
 
 		// get cam offset and location of cursor and caster
 		mouseX = gc.getInput().getMouseX();
-		mouseY = gc.getInput().getMouseY();
+		mouseY = gc.getInput().getMouseY(); // IS GOING TO HIGH UP, do we need to add to this? 
 		camX = gc.getRenderer().getCamX();
 		camY = gc.getRenderer().getCamY();
 		casterX = (int)caster.getPosX();
@@ -220,7 +227,7 @@ public class IceShard extends Projectile {
 		// DEBUG RENDERING: render lines representing x and y distance and total distance if showDebug is true
 		if(GameManager.showDebug){
 
-			System.out.println("DEBUG LINES FOR SHARD RELEASE");
+			
 			// render line between npc to mouseX
 			gm.addObject(new TempLine(60, (int)caster.getPosX(), (int)caster.getPosY(), mouseX+camX , mouseY + camY, 0xffffffff));			
 
@@ -236,16 +243,48 @@ public class IceShard extends Projectile {
 		// use the ratio of x and y distance to set x and y velocity
 		vx = velocity * ((float)xDistance/ (float)(Math.abs(xDistance) + Math.abs(yDistance)));
 		vy = velocity * ((float)yDistance/ (float)(Math.abs(xDistance) + Math.abs(yDistance)));
-		
-		System.out.println("\nIceShard Release Velocities:\n\tvx: " + vx + "\n\tvy: " + vy);
+
+		if(print)System.out.println("\nIceShard Release Velocities:\n\tvx: " + vx + "\n\tvy: " + vy);
 
 		//-------------------------------------------------------------------------------------
 
 	}
 
+
+
+
 	/**
-	 * Set up shard for recall..
-	 *  - thinking that this method is so similar to above I can break it down with a third method for doing the repitition
+	 * Releases an IceShard towards a target GameObject. 
+	 * <p>
+	 * Used when an NPC enters the release phase of IceShardSpell.
+	 * 
+	 * @param gm Used to access the GameObjects list so temporary objects can be added to debug velocity of released IceShards. 
+	 */
+	public void releaseShardTowardsTarget(GameManager gm, GameObject target){
+
+		// set booleans to move ice spell into release phase
+		charging = false;
+		releasing = true;
+
+		// x and y distance the IceShard will travel
+		//int xDistance = - (int)(caster.getPosX() - posX);
+		//int yDistance = - (int)(caster.getPosY() - posY);
+		
+		int xDistance = -(int)(posX - target.getPosX());
+		int yDistance = -(int)(posY - target.getPosY() );
+
+		// set velocity to ratio of x and y distance to the target (back to the player)
+		vx = velocity * ((float)xDistance/ (float)(Math.abs(xDistance) + Math.abs(yDistance)));
+		vy = velocity * ((float)yDistance/ (float)(Math.abs(xDistance) + Math.abs(yDistance)));
+
+	}
+
+
+
+
+	/**
+	 * Recalls the IceShard towards the the GameObject that initially cast the spell. 
+	 *  
 	 **/
 	public void recallShard(GameManager gm){
 
@@ -258,7 +297,7 @@ public class IceShard extends Projectile {
 		int xDistance = (int)(caster.getPosX() - posX);
 
 		int yDistance = (int)(caster.getPosY() - posY);
-		
+
 		// testing severity of excessive rounding
 		//int xDistance = (int)caster.getPosX() - (int)posX;
 		//int yDistance = (int)caster.getPosY() - (int)posY;
@@ -266,7 +305,7 @@ public class IceShard extends Projectile {
 		// DEBUG RENDERING: render lines representing x and y distance and total distance if showDebug is true
 		if(GameManager.showDebug){
 
-			System.out.println("DEBUG LINES FOR SHARD RELEASE");
+			
 			// render line from shard to the caster
 			gm.addObject(new TempLine(60, (int)posX, (int)posY, (int)caster.getPosX() , (int)caster.getPosY(), 0xffffffff));			
 
@@ -281,42 +320,46 @@ public class IceShard extends Projectile {
 		// set velocity to ratio of x and y distance to the target (back to the player)
 		vx = velocity * ((float)xDistance/ (float)(Math.abs(xDistance) + Math.abs(yDistance)));
 		vy = velocity * ((float)yDistance/ (float)(Math.abs(xDistance) + Math.abs(yDistance)));
-		
-		System.out.println("\nIceShard Recall Velocities:\n\tvx: " + vx + "\n\tvy: " + vy);
+
+		if(print)System.out.println("\nIceShard Recall Velocities:\n\tvx: " + vx + "\n\tvy: " + vy);
 
 
 	}
 
-	
+
+
+
 	/**
-	 * Render the Ice Shard.
+	 * Renders the IceShard.
 	 * 
 	 * How the IceShard is rendered depends on the state it is currently in.
 	 */
 	@Override
-	public void render(GameContainer gc, Renderer r) {
+	public void render(Renderer r) {
 
 		// as is not a game object or a component this has to be called manually... there has to be a way around this
-		snowMaker.render(gc, r);
+		snowMaker.render(r);
 
-		
+
 		if(charging){
-			
+
 			// If charging, Iceshard uses the casters position + offsets to positon above the caster + rotation on x and y
 			r.drawImage(image, (int)(caster.getPosX() + rotationX) + offSetX, (int)(caster.getPosY() + rotationY) + offSetY);
-		
+
 		}else if(releasing || recalling || waitingForRecall || returned){
-			
+
 			// otherwise, ice shard is rendered at its own position. Slightly offset so that it collisdes with tiles from its center. 
 			r.drawImage(image, (int)(posX - 4.5f), (int)(posY - 4.5f));
 		}
 
 		// render the ice shards hitbox (only renders when showDebug = true)
-		renderComponents(gc,r);
+		renderComponents(r);
 
 	}
 
-	
+
+
+
 	/**
 	 * IceShard Collision
 	 * 
@@ -329,49 +372,47 @@ public class IceShard extends Projectile {
 		// collision with the caster is important ONLY when the shards are recalling
 		// ignore all collision with the caster otherwise.
 		if(other.getId() == caster.getId()){
-			
+
 			// If shard collides with the caster durting recall, shard returns to charging. 
 			if(recalling){
 				// shard to return to spinning above caster in charge phase
 				recalling = false;
 				charging = true;	
 			}
-			
+
 			return;
 		}
 
-		
+
 		// COLLISION WITH CHARACHTERS
 		if(other.getObjectType() == ObjectType.NPC || other.getObjectType() == ObjectType.PLAYER ){
-			
+
 			Charachter c;
 
 			// If friendly fire is off, avoid damaging team mates
 			if(GameManager.friendlyFire == false){
-				
+
 				// cast to character, this will work as NPC and player are characters
 				c = (Charachter)other;
-				
+
 				// Check if the caster is on the same team as the charcter that collided with the shard
 				if(c.getTeam() == ((Charachter)caster).getTeam()){
-					
+
 					// same team and friedly fire is off, ignore this collison.
 					return;
 				}
 			}
 
-			
+
 			// Valid collision, damage must be applied
 
 			// get the health bar of the charchater that was hit
 			HealthBar healthBar  = (HealthBar)other.findComponent("hp");
-			
+
 			// apply damage
 			GameManager.log.log(((Charachter)other).getTag() + " has been damaged by an ice shard cast by " + caster.getTag());
 			healthBar.healthChanged(-20);
 		}
-
-
 	}
 
 

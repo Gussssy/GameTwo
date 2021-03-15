@@ -21,7 +21,7 @@ public abstract class Component{
 	protected GameObject parent;
 	
 	public abstract void update(GameContainer gc, GameManager gm, float dt);
-	public abstract void render(GameContainer gc, Renderer r);
+	public abstract void render(Renderer r);
 	
 	
 	public String getTag(){

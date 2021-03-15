@@ -5,11 +5,20 @@ import java.awt.event.KeyEvent;
 import com.gussssy.gametwo.engine.GameContainer;
 import com.gussssy.gametwo.game.GameManager;
 import com.gussssy.gametwo.game.SoundManager;
+import com.gussssy.gametwo.game.level.Level;
 
+/**
+ * Class responsible for player movement under normal circumstances. 
+ */
 public class PlayerMovementBasic {
 
+	// The Player
 	Player player;
 
+	
+	/**
+	 *  Makes a new PlayerMovementBasic object.
+	 */
 	public PlayerMovementBasic(Player player){
 		this.player = player;
 
@@ -17,7 +26,11 @@ public class PlayerMovementBasic {
 
 	
 	/**
-	 * Moves player in response to keyboard input. 
+	 * Moves the appropriately player in response to keyboard input. 
+	 * 
+	 * @param gc GameContainer used to access keyboard input
+	 * @param gm GameManager used to access the terrain the player is moving among
+	 * @param dt the time passed since the last update. 
 	 **/
 	public void movementUpdate(GameContainer gc, GameManager gm, float dt){
 		
@@ -36,8 +49,6 @@ public class PlayerMovementBasic {
 				// there is a solid tile to the left but the player may not yet be touching it
 
 
-				
-				
 				player.setOffX(player.getOffX() - dt * player.getSpeed());
 				//offX -= dt * speed;
 
@@ -98,16 +109,28 @@ public class PlayerMovementBasic {
 		if(gc.getInput().isKey(KeyEvent.VK_A)){
 			// left walking animation 
 			player.setDirection(1);
-			player.animationState += dt * player.animationSpeed;
-			if(player.animationState > 4)player.animationState = 0;
+			player.setAnimationState(player.getAnimationState() + dt * player.getAnimationSpeed());
+			if(player.getAnimationState() > 4)player.setAnimationState(0);
+			
+			// Add footstep sounds when animation state is 0 or 2 (this is when player takes a new step)
+			if(player.getAnimationState() == 0 || player.getAnimationState() == 2 && player.onGround){
+				SoundManager.snowFootSteps.playRandom();
+			}
+			
 		} else if(gc.getInput().isKey(KeyEvent.VK_D)){
 			// right walking animation
 			player.setDirection(0);
-			player.animationState += dt * player.animationSpeed;
-			if(player.animationState > 4)player.animationState = 0;
+			player.setAnimationState(player.getAnimationState() + dt * player.getAnimationSpeed());
+			if(player.getAnimationState() > 4)player.setAnimationState(0);
+			
+			// Add footstep sounds when animation state is 0 or 2 (this is when player takes a new step)
+			if(player.getAnimationState() == 0 || player.getAnimationState() == 2 && player.onGround){
+				SoundManager.snowFootSteps.playRandom();
+			}
+			
 		} else {
 			// stationary 
-			player.animationState = 0;
+			player.setAnimationState(0);
 		}
 
 
@@ -172,7 +195,8 @@ public class PlayerMovementBasic {
 		// CALCULATE EFFECT OF GRAVITY
 
 		// fallDistane is increased by current fallSpeed * time passed since last update
-		player.fallDistance += dt * gm.getGravity();
+		//player.fallDistance += dt * gm.getGravity();
+		player.fallDistance += dt * Level.gravity;
 
 
 
@@ -227,6 +251,9 @@ public class PlayerMovementBasic {
 			if((gm.getLevelTileCollision(player.getTileX(), player.getTileY() + 1) || gm.getLevelTileCollision(player.getTileX() + (int)Math.signum((int)Math.abs(player.getOffX()) > player.getLeftRightPadding() ? player.getOffX() : 0), player.getTileY() + 1)) && player.getOffY() >= 0 ){
 
 				// Collision with ground detected
+				
+				// if player has just hit the ground, make a sound.
+				if(!player.onGround)SoundManager.snowFootSteps.playRandom();
 
 				player.fallDistance = 0;	// dont fall this frame
 				player.setOffY(0);	//offY = 0;			// set the player on top of this tile
@@ -240,7 +267,7 @@ public class PlayerMovementBasic {
 
 		// animating jump / falling
 		if(player.fallDistance > 1){
-			player.animationState = 1; 
+			player.setAnimationState(1); 
 		}
 
 

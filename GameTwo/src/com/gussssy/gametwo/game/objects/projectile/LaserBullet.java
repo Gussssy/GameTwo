@@ -180,7 +180,7 @@ public class LaserBullet extends Projectile {
 	
 	
 	@Override
-	public void render(GameContainer gc, Renderer r) {
+	public void render(Renderer r) {
 		
 		r.drawImage(image, (int)posX, (int)posY);
 		

@@ -11,6 +11,7 @@ public class PathNode {
 	public PathNode previousNode = null;
 	
 	// tile location
+	// THESE SHOULD BE PRIVATE 10/2/21
 	public int startTileX;
 	public int startTileY;
 	public int endTileX;

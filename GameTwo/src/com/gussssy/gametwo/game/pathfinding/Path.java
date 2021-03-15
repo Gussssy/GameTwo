@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.gussssy.gametwo.game.GameManager;
 import com.gussssy.gametwo.game.objects.npc.NPC;
+import com.gussssy.gametwo.game.objects.testObjects.PathNodeVisualObject;
 
 public class Path {
 
@@ -16,13 +17,16 @@ public class Path {
 	PathNode currentPathStep;
 	GameManager gm;
 	boolean readyToExecuteStep = false;
-
-
+	
 	
 
-	ArrayList<String> instructions = new ArrayList<String>();
-	ArrayList<Movement> moves = new ArrayList<Movement>();
+
+	// old path variables, need to go.
+	//ArrayList<String> instructions = new ArrayList<String>();
+	//ArrayList<Movement> moves = new ArrayList<Movement>();
 	NPC npc;
+	
+	// For tracking where the npc is going to and where it is currently
 	int tileX, tileY, nextTileX, nextTileY;
 	int nextX, nextY;
 
@@ -52,7 +56,9 @@ public class Path {
 	String nextInstruction;	
 
 
-
+	/**
+	 * Constructs a path for the npc to follow. 
+	 */
 	public Path(ArrayList<PathNode> pathSteps, NPC npc, GameManager gm){
 		
 		if(print)System.out.println("\n\n\n |||| PathConstructor: Initiating A New Path |||");
@@ -67,7 +73,16 @@ public class Path {
 			for(PathNode pm : pathSteps){
 				System.out.println(pm.toString());
 			}
+			
 		}
+		
+		
+		// Moved to NPC, in the idle method
+		// Visualise the path with Green Squares
+		// to do this add PathNodeVisualObjects to the the GameObjects list
+	/*for(PathNode pm : pathSteps){
+		gm.addObject(new PathNodeVisualObject(pm.endTileX, pm.endTileY));
+	}*/
 		
 
 		// setup
@@ -385,7 +400,8 @@ public class Path {
 			// npc needs to jump, if it hasnt jumped already then jump. 
 			// also dont jump if have already / dont jump if npc has reached the target y... leads to spam jumping on the edge of the target tile
 			if(npc.isOnGround() && tileY != nextY){
-				return "up";
+				//return "up";
+				return "smallJump";
 			}else if(tileX != nextX){
 				return direction;
 			}else{
@@ -447,590 +463,6 @@ public class Path {
 
 
 
-
-	public Path(ArrayList<String> steps, NPC npc){
-
-		this.npc = npc;
-		this.offX = npc.getOffX();
-		this.offY = npc.getOffY();
-
-		// Print out initial state of path
-		if(print){
-			System.out.println("Making a new path");
-			System.out.println("New path has " + steps.size() + " steps");
-			System.out.println("Reading path with contents: ");
-			for(String step : steps){
-				System.out.println(step);
-				instructions.add(step);
-			}
-		}
-
-		// Construct moves array
-		boolean lastWasUp = false;
-		int ups = 0;
-		for(String s : steps){
-
-			if(s == "up"){
-				lastWasUp = true;
-				ups++;
-				continue;
-			}
-
-			if(!lastWasUp){
-
-				// if left right or down add movement
-				if(s == "left"){
-					moves.add(Movement.LEFT);
-				}else if(s == "right"){
-					moves.add(Movement.RIGHT);
-				}else if(s == "down"){
-					moves.add(Movement.DOWN);
-				}else if(s == "up"){
-					lastWasUp = true;
-					System.out.print("Ups value before being modified: " + ups);
-					ups++;
-					System.out.println("Ups incremented, intial up");
-					System.out.print("Ups value after being modified: " + ups);
-				}
-
-
-				// if up, set lastWasUp and start counting
-			}else{
-				// last was up 
-
-				if(s == "up"){
-					// keeping counting up
-					if(print)System.out.println("Ups value before being modified: " + ups);
-					ups++;
-					if(print)System.out.println("Ups incremented, secondary up");
-					if(print)System.out.println("Ups value after being modified: " + ups);
-
-				}else if(s == "left"){
-					// switch to get left movement
-					if(print)System.out.println("Up terminated with left");
-					if(print)System.out.println("Ups value: " + ups);
-					switch(ups){
-					case 1:
-						moves.add(Movement.UP_LEFT);
-						break;
-					case 2:
-						moves.add(Movement.UP_UP_LEFT);
-						break;
-					case 3:
-						moves.add(Movement.UP_UP_UP_LEFT);
-						break;
-					}
-					// reset variables
-					lastWasUp = false;
-					ups = 0;
-
-				}else if(s == "right"){
-					//switch to get right movement
-					if(print)System.out.println("Up terminated with right");
-					if(print)System.out.println("Ups value: " + ups);
-					switch(ups){
-					case 1:
-						moves.add(Movement.UP_RIGHT);
-						break;
-					case 2:
-						moves.add(Movement.UP_UP_RIGHT);
-						break;
-					case 3:
-						moves.add(Movement.UP_UP_UP_RIGHT);
-						break;
-					}
-					// reset variables
-					lastWasUp = false; 
-					ups = 0;
-				}
-			}			
-		}// end of for each loop on steps 
-
-		// deal with consecutives ups not terminated
-		if(lastWasUp){
-			switch(ups){
-			case 1:
-				moves.add(Movement.UP);
-				break;
-			case 2:
-				moves.add(Movement.UP_UP);
-				break;
-			case 3: 
-				moves.add(Movement.UP_UP_UP);
-				break;
-			}
-		}
-
-		// set current movement
-		moveProg = 0;
-		tileX = npc.getTileX();
-		tileY = npc.getTileY();
-
-		setNextMovement(moveProg);
-
-		if(print){
-			System.out.println("Printing moves array");
-			System.out.println(moves.toString());
-			System.out.println();
-		}
-	}
-
-
-
-
-
-	/**
-	 * Called continuously as the NPC executes the path.
-	 * 
-	 * Returns a String to the NPC instance who is executing the path, providing an instruction.... 
-	 * 
-	 **/
-	public String update(){
-
-		// Get the tile location of the NPC for this update
-		tileX = npc.getTileX();
-		tileY = npc.getTileY();
-
-		// Check if the npc has moved this frame
-		if(npc.getOffX() == offX && npc.getOffY() == offY){
-			//System.out.println("NPC is stationary");
-			updatesStationary++;
-
-			// if the NPC has been stationary for 120 updates, recalculate the path
-			if(updatesStationary == 120){
-				if(print)System.out.println("NPC has been sationary for 120 updates, need to try something... will try recalculating");
-				return "recalculate";
-			}
-		}
-
-		// set new offSet values so they can be checked for changes next update
-		offX = npc.getOffX();
-		offY = npc.getOffY();
-
-
-
-		// Deal with overshoot on left and right movements
-		// It is very likely not just LEFT and RIGHT can lead to overshoot.
-		if((currentMovement == Movement.RIGHT && tileX > nextX) || (currentMovement == Movement.LEFT && tileX < nextX) ){
-			if(print)System.out.println("!!!!!! NPC is off course, need to recalculate !!!!!!");
-			return "recalculate";
-		}
-
-
-
-		// Has the NPC reached the next target tile ? 
-		if(tileX == nextX && tileY == nextY){
-
-			if(print)System.out.println("\n\nReached next target tile, movement was: " + currentMovement);
-
-			// The NPC has reached the target, increment progress
-			moveProg++;
-
-			// Has npc finished this path ? 
-			if(moves.size() == moveProg){
-
-				// npc has finished this path
-				if(print)System.out.println("!!!!!! NPC has Finished path !!!!!!");
-				return "stop";
-				//NPC is finishing 1 step too soon...
-			}
-
-			// NPC has not finished the path yet
-			setNextMovement(moveProg);
-		}
-
-
-
-		// PATH TO THE TARGET TILE
-
-		if(currentMovement == null){
-
-			if(print)System.out.println(" Current Movement was null. 0 length path?");
-			return "stop";
-		}
-
-
-		// call reset to set booleans to false;
-		reset();
-
-
-		switch(currentMovement){
-		case LEFT:
-			direction = "left";
-			acrossOne = true;
-
-			break;
-
-
-		case UP_LEFT:
-
-			// set direction to left for any following down movements
-			direction = "left";
-			upOneAcrossOne = true;
-
-
-			/*
-			// npc needs to jump, once has jumped, wait untill has traveled into next RH tile, then stop right movement
-
-			// if we have travelled enough right, stop going right and wait for npc to fall on target tile
-			if(tileX == nextX){
-				return "stopLeft";
-
-				// else if NPC hasnt jumped yet, tell NPC to jump
-			} else if (npc.isOnGround()){
-				return "up";
-
-				// else, NPC has jumped and needs to move left some more
-			}else {
-				return "left";
-			}*/
-
-			break;
-
-
-			// NOTE, offX matters on bot sides, has to be more than -3 and less then 3. 3 is the value of bot bot left right paddigng
-
-
-		case UP_UP_LEFT:
-			direction = "left";
-			jumpHeight = 2;
-			upMultipleAcrossOne = true;
-
-			/*
-			// Need to jump, but first make sure that we wont collide
-			System.out.println("Path Update, Case: UP_UP_LEFT\t\t" + "tileX: " + tileX + ", tileY: " + tileY );
-			// if at the base of the jump, move right so that npc wont collide when jumping
-			if(offX < -npc.getLeftRightPadding() && tileY -2 == nextY){
-				if(npc.isOnGround())return "right";
-				System.out.println("Bot bot is at the base of the jump and is correcting his postion. Returning right");
-				// but we need to stop going right...
-
-				// NPC can now jump without colliding
-			}else if(npc.isOnGround()){
-				System.out.println("BotBot is ready to juimp. returning up: ");
-				System.out.println("NPC tileX: " + tileX);
-				return "up";
-			}else{
-				// NPC is airbourne
-
-				// if npc has moved up enough and hasnt overshot nextX, move left, else dont do anything
-				if(tileY <= nextY && tileX > nextX) {
-					System.out.println("Botbot is airbourne and ready to go left. returning left");
-					return "left";
-				}else {
-					System.out.println("Botbot is airbourne but not yet ready to go left, returning wait.");
-					return "wait";
-				}
-			}*/
-
-			break;
-
-
-
-		case UP_UP_UP_LEFT:
-			direction = "left";
-			jumpHeight = 3;
-			upMultipleAcrossOne = true;
-
-			/*
-			//NOTE I COULD ARRANGE THIS SO ONCE TOP CONDITION IS MET, executes else clause, which proceedes to do the rest of the movemtnt
-			// Need to jump, but first make sure that we wont collide
-			System.out.println("Path Update, Case: UP_UP_UP_LEFT\t\t" + "tileX: " + tileX + ", tileY: " + tileY );
-			// if at the base of the jump, move right so that npc wont collide when jumping
-			if(offX < -3 && tileY -3 == nextY){
-				if(npc.isOnGround())return "right";
-				System.out.println("Bot bot is at the base of the jump and is correcting his postion. Returning right");
-				// but we need to stop going right...
-
-				// NPC can now jump without colliding
-			}else if(npc.isOnGround()){
-				System.out.println("BotBot is ready to juimp. returning up: ");
-				System.out.println("NPC tileX: " + tileX);
-				return "up";
-			}else{
-				// NPC is airbourne
-
-				// if npc has moved up enough and hasnt overshot nextX, move left, else dont do anything
-				if(tileY <= nextY && tileX > nextX) {
-					System.out.println("Botbot is airbourne and ready to go left. returning left");
-					return "left";
-				}else {
-					System.out.println("Botbot is airbourne but not yet ready to go left, returning wait.");
-					return "wait";
-				}
-			}*/
-
-			break;
-
-
-
-		case RIGHT:
-			direction = "right";
-			acrossOne = true;
-			break;
-
-		case UP_RIGHT:
-			direction = "right";
-			upOneAcrossOne = true;
-
-
-			/*
-			// npc needs to jump, once has jumped, wait untill has traveled into next RH tile, then stop right movement
-			// move to somewhere in the middle of the tile before jumping
-			// note: thisis onlyt important when the neighbouring right tile is solid
-			//  [][]
-			//  [][]
-
-			// if we have travelled enough right, stop going right and wait for npc to fall on target tile
-			if(tileX == nextX){
-				return "stopRight";
-
-				// else if NPC hasnt jumped yet, tell NPC to jump
-			} else if (npc.isOnGround()){
-				return "up";
-
-				// else, NPC has jumped and needs to move right some more
-			}else {
-				return "right";
-			}*/
-
-			break;
-
-		case UP_UP_RIGHT:
-			direction = "right";
-			jumpHeight = 2;
-			upMultipleAcrossOne = true;
-			/*
-			// Need to jump
-			if(npc.isOnGround()){
-				return "up";
-			}else{
-				// NPC is airbourne
-
-				// if npc has moved up enough and hasnt overshot nextX, move right, else dont do anything
-				if(tileY >= nextY && tileX < nextX) {
-					return "right";
-				}else {
-					return "wait";
-				}
-			}*/
-			break;
-
-		case UP_UP_UP_RIGHT:
-			direction = "right";
-			jumpHeight = 3;
-			upMultipleAcrossOne = true;
-
-			/*
-			// Need to jump
-			if(npc.isOnGround()){
-				return "up";
-			}else{
-				// NPC is airbourne
-
-				// if npc has moved up enough and hasnt overshot nextX, move right, else dont do anything
-				if(tileY >= nextY && tileX < nextX) {
-					return "right";
-				}else {
-					return "wait";
-				}
-			}
-			 */
-			break;
-
-		case UP:
-			return "up";
-
-		case DOWN:
-			// continue last horizontal movement untill npc actually falls....
-			if(npc.isOnGround()){
-				return direction;
-			}else{
-				// once falling stop movement and wait to hit ground
-				//System.out.println("NPC is now falling and should stop movement in direction");
-				return "wait";
-			}
-		default:
-			break;
-		}
-
-		//return"";
-
-
-		// SIMPLE LEFT OR RIGHT
-		// Ececute basic movement left or right
-		if(acrossOne){
-			return direction;
-		}
-
-		// UP ONE ACROSS ONE 
-		// Execute up and across one.
-		if(upOneAcrossOne){
-
-			// CORRECT OFFSET BEFORE JUMPING
-			// moving enough into the tile so that jumping wont collide with a tile above leading to multipel useless jumps
-			if(direction == "left"){
-				// direction is left
-				if(npc.getOffX() > npc.getLeftRightPadding()){
-					// need to more left before able to safely jump
-					return direction;
-				}
-			}else{
-				// direction must be right
-				if(npc.getOffX() < -npc.getLeftRightPadding()){
-					// need to more left before able to safely jump
-					return direction;
-				}
-			}
-
-			// at this point we can be sure its time to jump
-
-
-			// npc needs to jump, if it hasnt jumped already then jump. 
-			// also dont jump if have already / dont jump if npc has reached the target y... leads to spam jumping on the edge of the target tile
-			if(npc.isOnGround() && tileY != nextY){
-				return "up";
-			}else if(tileX != nextX){
-				return direction;
-			}else{
-				return "wait";
-			}
-
-
-		}
-
-
-		// UP MANY ACROSS ONE 
-		if(upMultipleAcrossOne){
-			if(print)System.out.println("Path Update, UP Multiple, Across 1.  Case: " + currentMovement  + ", Npc current location:  tileX: " + tileX + ", tileY: " + tileY );
-
-			// Correcting NPC position on the tile before jumping to avoid unwanted collisions when jumping
-			// Is NPC at the base of the jump and not mid jump? 
-			if(npc.isOnGround() && tileY - jumpHeight == nextY){
-
-				//do we need left correction? 
-				// offX > 3
-				if(offX > 3){
-					// offX exceeds 3, may need to move left to avoid collision on jump
-					return "left";
-
-
-					// do we need right correction? 
-					//offX < -3
-				}else if(offX < -3){
-					// offX is less then -3, may need to move right to avoid collision
-					return "right";
-
-					// if all above conditions are false, it is now safe for the npc to jump
-				}else{
-					// tell the npc to jump
-					return "up";
-				}
-			}else if(tileY == nextY){
-				// npc has jumped and has reached the desired height, start moving in the direction
-				return direction;
-			}else{
-				return "wait";
-			}
-
-			/**if(!npc.isOnGround()){
-				//npc is mid jump, need to start moving in direction when at an appropriate height
-				if(tileY == nextY){
-					return direction;
-				}else {
-					return "wait";
-				}
-			}else{
-				// npc is on the ground of the next tile?
-			}*/
-
-		}
-
-		if(print)System.out.println("SHOULD NOT BE HERE, SOMETHING IS WRONG IN PATH.UPDATE()");
-		return "";
-
-	}
-
-
-	/**
-	 * Set the next movement. Old path finding algorithm. 
-	 **/
-	private void setNextMovement(int moveProg){
-
-
-		// (26/8) temporary fix for when a 0 length path is created. 
-		// not sure right now where the most logical place for this to be dealt with is. 
-		if(moves.size() == 0){
-			nextX = tileX;
-			nextY = tileY;
-			return;
-		}
-
-		currentMovement = moves.get(moveProg);
-		if(print){
-			System.out.println("Current moveProg: " + moveProg);
-			System.out.println("Setting next target tile");
-			System.out.println("Current NPC tile location: tileX = " + npc.getTileX() + ", tileY = " + npc.getTileY());
-		}
-
-
-		switch(currentMovement){
-		case LEFT:
-			nextX = tileX -1;
-			nextY = tileY;
-			break;
-		case UP_LEFT:
-			nextX = tileX -1;
-			nextY = tileY -1;
-			break;
-		case UP_UP_LEFT:
-			nextX = tileX -1;
-			nextY = tileY -2;
-			break;
-		case UP_UP_UP_LEFT:
-			nextX = tileX -1;
-			nextY = tileY -3;
-			break;
-		case RIGHT:
-			nextX = tileX +1;
-			nextY = tileY;
-			break;
-		case UP_RIGHT:
-			nextX = tileX +1;
-			nextY = tileY -1;
-			break;
-		case UP_UP_RIGHT:
-			nextX = tileX +1;
-			nextY = tileY -2;
-			break;
-		case UP_UP_UP_RIGHT:
-			nextX = tileX +1;
-			nextY = tileY -3;
-			break;
-		case UP:
-			nextX = tileX;
-			nextY = tileY -1;
-			break;
-		case DOWN:
-			nextX = tileX;
-			nextY = tileY +1;
-			break;
-		case LEFT_DOWN: 
-			break;
-		case RIGHT_DOWN:
-			break;
-		default:
-			break;
-		}
-
-		if(print){
-			System.out.println("Current Movement: " + currentMovement);
-			System.out.println("NPC will move to: tileX = " + nextX + ", tileY = " + nextY);
-		}
-
-	}
-
-
 	/**
 	 * Resets the boolean controlling what kind of movement is executed. 
 	 * 	- called when a step/movement is completed and a new one is loaded.
@@ -1043,6 +475,10 @@ public class Path {
 		acrossOneDown = false;
 
 
+	}
+
+	public ArrayList<PathNode> getPathSteps() {
+		return pathSteps;
 	}
 
 }

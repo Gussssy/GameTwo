@@ -39,8 +39,14 @@ public class SmartBotBot extends NPC{
 	private int visionUpdateInterval = 20;										// how many frames between awareness updates, awarenessCounter takes this value after awareness is updated
 
 
-	// SmartBotBots green light that surronds it. Only visible at night/when dark so maybe this should always be on...
+	// SmartBotBots green light that surrounds it. Only visible at night/when dark so maybe this should always be on...
 	Light light = new Light(32, 0xff00ff00);
+	
+	
+	
+	// booleans controlling noises made when an enemy is found
+	private boolean alerted = false;
+	private boolean makeSoundWhenAlerted = false;
 
 
 	/** 
@@ -71,7 +77,7 @@ public class SmartBotBot extends NPC{
 		this.addComponent(new AABBComponent(this));
 
 		//actionType = NPCActionType.IDLE;
-		actionType = NPCActionType.ATTACK;
+		//actionType = NPCActionType.ATTACK;
 
 		//weapon = new Pistol(this);
 		weapon = new AimedPistol(this);
@@ -90,6 +96,8 @@ public class SmartBotBot extends NPC{
 
 	}
 
+	
+	
 	
 	/**
 	 * SmartBotBot Update.	
@@ -113,6 +121,25 @@ public class SmartBotBot extends NPC{
 		if(visionCounter <= 0){
 			vision.updateVision(gm);
 			visionCounter = visionUpdateInterval;
+			
+			
+			
+			// Making Sounds when a new enemy is found
+			
+			// if there wasnt an enemy in vision previously and an enemy has just been found, make a sound
+			if(vision.isEnemyInVision()){
+				
+				if(alerted == false){
+					alerted = true;
+					if(makeSoundWhenAlerted)SoundManager.alertSounds.playRandom();
+				}
+			} else {
+				// no enemies in vision
+				alerted = false;
+			}
+			
+			
+			
 		}else{
 			visionCounter--;
 		}
@@ -122,7 +149,7 @@ public class SmartBotBot extends NPC{
 		switch(actionType){
 		case IDLE:
 			// idle around looking for tiles to path to
-			idle(gm);
+			idlePathing(gm);
 			break;
 		case PATH: 
 			// only bot bot has any use for this atm
@@ -199,7 +226,7 @@ public class SmartBotBot extends NPC{
 		if(visionCounter == visionUpdateInterval){
 			
 			// awareness has just been updated
-			optionalTarget = vision.selectTargetEnemy();
+			optionalTarget = vision.getTargetEnemy();
 			
 			// was an enemy found? 
 			if(optionalTarget.isPresent()){
@@ -220,7 +247,7 @@ public class SmartBotBot extends NPC{
 				
 		}else {
 			// there is no target currently and awareness hasnt updated this frame continue idle
-			idle(gm);
+			idlePathing(gm);
 		}
 
 	}
@@ -231,25 +258,8 @@ public class SmartBotBot extends NPC{
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	@Override
-	public void render(GameContainer gc, Renderer r){
+	public void render(Renderer r){
 
 
 		r.drawImage(botbotImage, (int)posX, (int)posY);
@@ -259,14 +269,20 @@ public class SmartBotBot extends NPC{
 			r.drawImage(flag, targetX, targetY);
 		}
 
-		this.renderComponents(gc, r);
+		this.renderComponents(r);
 
 		// testing new awareness
-		vision.renderAwareness(r);
+		vision.renderVision(r);
 
 	}
 
 
+	
+	
+	
+	
+	
+	
 	int[] incursions = new int[4];
 	int smallestIndex;
 	int botIncursion, topIncursion, leftIncursion, rightIncursion;

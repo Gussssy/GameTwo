@@ -87,7 +87,7 @@ public class TornadoEmitter extends ParticleEmitter {
 	}
 
 	@Override
-	public void render(GameContainer gc, Renderer r) {
+	public void render(Renderer r) {
 		
 		
 		for(RainParticle p : particles){

@@ -91,7 +91,7 @@ public class ProjectileLauncher extends GameObject {
 	}
 
 	@Override
-	public void render(GameContainer gc, Renderer r) {
+	public void render(Renderer r) {
 		
 		r.drawFillRect(tileX*GameManager.TS, tileY*GameManager.TS , width, height, 0xff555555);
 		

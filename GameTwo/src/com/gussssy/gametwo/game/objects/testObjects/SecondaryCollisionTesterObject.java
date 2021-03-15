@@ -55,13 +55,13 @@ public class SecondaryCollisionTesterObject extends GameObject {
 	}
 
 	@Override
-	public void render(GameContainer gc, Renderer r) {
+	public void render(Renderer r) {
 		
 		r.drawFillRect((int)(posX), (int)(posY), width, height, 0x55ffffff);
 		if(colliding)r.drawFillRect(resolution.x, resolution.y, width, height, 0x5500ff00);
 
 
-		renderComponents(gc,r);
+		renderComponents(r);
 		
 	}
 	

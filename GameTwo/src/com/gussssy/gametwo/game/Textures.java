@@ -22,10 +22,19 @@ public class Textures {
 	public static Image marbleBrick = new Image("/marbleBrick.png");
 	public static Image marblePillar = new Image("/pillar.png");
 	public static Image ice = new Image("/blocks/ice.png");
-	
-	
-	
+	public static Image redRock = new Image("/blocks/red_Rock.png");
 	public static Image dirtBack = new Image("/dirt_back.png");
+	
+	
+	// Spacecraft blocks
+	//public static Image spaceCraftBlock1 = new Image("/blocks/space_craft_block_1.png");
+	public static Image spaceCraftBlock1 = new Image("/blocks/spacecraft_block_2.png");
+	//public static Image spaceCraftInteriorWindow1 = new Image("/blocks/spacecraft_interior_window_1.png");
+	public static Image spaceCraftInteriorWindow1 = new Image("/blocks/spacecraft_interior_window_1_smaller.png");
+	public static Image spaceCraftInteriorPanel1 = new Image("/blocks/spacecraft_interior_panel_1.png");
+	public static Image spaceCraftExteriorGlass = new Image("/blocks/spacecraft_exterior_glass_1.png");
+	public static Image spaceCraftInteriorGlass = new Image("/blocks/spacecraft_interior_glass_1.png");
+	
 	
 	// Player
 	public static ImageTile playerTile = new ImageTile("/gusterix_tile.png", 16,16);
@@ -36,7 +45,8 @@ public class Textures {
 	public static Image botbotImage = new Image("/BotBot1.png");
 	public static Image smartBotBot = new Image("/SmartBotBot.png");
 	public static ImageTile botbotTile = new ImageTile("/character/botbot_tile.png",16,16);
-	// Goose ? 
+	public static ImageTile gooseTile = new ImageTile("/goose_tile1.png", 25,32);
+	public static ImageTile rabbitTile = new ImageTile("/character/rabbit1_4frames.png",32,32); 
 	
 	// Debugging images
 	public static Image marker = new Image("/marker.png");
@@ -51,6 +61,8 @@ public class Textures {
 	
 	public static void init(){
 		water.setAlpha(true);
+		//spaceCraftExteriorGlass.setAlpha(true);
+		//spaceCraftInteriorGlass.setAlpha(true);
 	}
 	
 

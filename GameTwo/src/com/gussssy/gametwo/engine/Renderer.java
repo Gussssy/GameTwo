@@ -14,47 +14,72 @@ import com.gussssy.gametwo.engine.gfx.LightRequest;
 
 /**
  * Performs the Rendering. 
+ * 
+ * Adapted from Maljowops video tutorial series on youtube: 
+ * https://www.youtube.com/watch?v=4iPEjFUZNsw&list=PL7dwpoQd3a8j6C9p5LqHzYFSkii6iWPZF&ab_channel=Majoolwip
+ * 
+ * Much of this class has not changed much from the tutorial. 
  */
 public class Renderer{
 
+	// Width and Height
 	private int pW, pH;
-	private int[] pixels; //pixels
+	
+	// Pixels
+	private int[] pixels; 
+	
+	// Depth
 	private int[] zBuffer;
+	private int zDepth = 0;
+	
+	// Light 
 	private int[] lightMap;
 	private int[] lightBlock;
 
+	// Camera offsets
 	private int camX, camY;
 
-	//private int ambientColor = 0xffffffff;
-	//private int ambientColor = 0xff6b6b6b;
+	// Ambient Color. (this is set by the GameManager after construction)
 	private int ambientColor = 0xff232323;
-
-	//private int transparentColour = 0xffff00ff; // Represents RGB colour (255,0,255)
-
-	private int zDepth = 0;
-	private ArrayList<ImageRequest> imageRequests = new ArrayList<ImageRequest>();
-	private ArrayList<LightRequest> lightRequests = new ArrayList<LightRequest>();
-	private boolean processing = false;
-
+	
+	// Font
 	private Font font = Font.STANDARD;
 
 
+	// Contains images that have transperancy. They will be drawn after all oqapue images have been drawn.
+	private ArrayList<ImageRequest> imageRequests = new ArrayList<ImageRequest>();
+	
+	// Contains lights that will be drawn after everything else has been drawn. 
+	private ArrayList<LightRequest> lightRequests = new ArrayList<LightRequest>();
+	
+	// When true, the renderer will process lighting and transparent images
+	private boolean processing = false;
 
+	
+
+
+	/**
+	 * Renderer Constructor
+	 */
 	public Renderer(GameContainer gc){
 
-
-
+		// Set width and height
 		pW = gc.getWidth();
 		pH = gc.getHeight();
-		pixels = ((DataBufferInt)gc.getWindow().getImage().getRaster().getDataBuffer()).getData(); //gives int array p, direct access to the pixel data of the image in the window
-		//Raster = image data
+		
+		//gives int array p, direct access to the pixel data of the image in the window
+		pixels = ((DataBufferInt)gc.getWindow().getImage().getRaster().getDataBuffer()).getData(); 
 
+		// Initialise arrays used for lighting and depth. Correspond to the pixels array so are set to the same length. 
 		zBuffer = new int[pixels.length];
 		lightMap = new int[pixels.length];
 		lightBlock = new int[pixels.length];
 
 	}
 
+	/**
+	 * Clear the pixels and the associated depth and lightring arrays each frame.  
+	 */
 	public void clear(){
 
 		for(int i = 0; i < pixels.length; i++){
@@ -69,10 +94,11 @@ public class Renderer{
 
 
 	// Contains the current pixel's index so it isnt recalculated each time it is needed
+	// NOTE: is there any benefoit to this being outside the method so we are not declaring an internal variable, thousands of times per frame. 
 	private int pixelIndex;
 
 	/**
-	 * Set the pixel to the specified colorValue, applies alpha blending if required 
+	 * Set the pixel to the specified colorValue, applies alpha blending if required.
 	 **/
 	public void setPixel(int x, int y, int colorValue){
 
@@ -80,27 +106,24 @@ public class Renderer{
 		int alpha = ((colorValue >> 24) & 0xff);
 
 		
-
-		// If x or y value is out of bounds OR the colour ios fully transparent, do not set this pixel
+		// If x or y value is out of bounds OR the colour is fully transparent, do not set this pixel
 		if((x < 0 || x >= pW || y < 0 || y >= pH) || alpha == 0){
-			//if((x < 0 || x >= pW || y < 0 || y >= pH) || colorValue == transparentColour)
 			return;
 		}
 
+		// calculate pixel index so that this calculation does not have to be performed several more times. 
 		pixelIndex = x + y * pW;
 		
-		// TESTING
-		// setting z buffer for thi pixel
+		
+		// setting z buffer for this pixel
 		zBuffer[pixelIndex] = zDepth;
 
-		//Not entirely sure what this is doing yet
+		// Is the current pixel hidden by another pixel of lesser depth?
 		if(zBuffer[pixelIndex] > zDepth){
-			// if there is already set pixels ..? then return ...? 
+			// Yes this pixel is behind a previosuly set pixel. Do nothing
 			return;
 		}
-
-
-		// SET PIXEL 
+ 
 
 
 		// Is this pixel Opaque?
@@ -109,22 +132,22 @@ public class Renderer{
 			// This pixel is opaque, no blending required
 			pixels[pixelIndex] = colorValue; // p[] is 1d, but is storing 2d image. This converts 2d representation to 1d.  
 
-			// Prints out the color value to console
-			//System.out.println(Integer.toHexString(colorValue));
 
 		} else {
+			
+			// ALPHA BLENDING
 
 			// This pixel is to be transparent, alpha blending is required
 
 			// the color this pixel was previously set too, if at all 
 			int setColor = pixels[pixelIndex];
 
+			//acess the red/green/blue componment of already set pixel: (setColor >> 16) & 0xff
+			// then SUBTRACT from this the difference between the currently set red/green/blue and the incoming red component
 			int newRed = ((setColor >> 16) & 0xff) - (int)((((setColor >> 16) & 0xff) - ((colorValue >> 16) & 0xff)) * (alpha/255f));
 			int newGreen = ((setColor >> 8) & 0xff) - (int)((((setColor >> 8) & 0xff) - ((colorValue >> 8) & 0xff)) * (alpha/255f));
 			int newBlue = (setColor & 0xff) - (int)(((setColor & 0xff) - (colorValue  & 0xff)) * (alpha/255f));
-			//acess the red componment of already set pixel: (setColor >> 16) & 0xff
-			// then SUBTRACT from this the difference between the currently set red and the incoming red component
-
+			
 
 			// Set the pixel with the new blended values
 			pixels[pixelIndex] = (255 << 24 | newRed << 16 | newGreen << 8 | newBlue); 
@@ -133,9 +156,13 @@ public class Renderer{
 
 	}
 
+
+	/**
+	 * Set Light block. 
+	 * 
+	 * This method is identical to the tutorial method. I do not use this feature at present.
+	 */
 	public void setLightBlock(int x, int y, int value){
-
-
 
 		if(x < 0 || x >= pW || y < 0 || y >= pH){
 			return;
@@ -151,15 +178,18 @@ public class Renderer{
 
 	}
 
-	/** Set the light Map for alpha blending
+	
+	
+	/** 
+	 * Applys lighting effects.
 	 * 
-	 * NO PRETTY SURE THIS IS NOOOTTTTT ALPHA BLENDING THIS IS LIGHT
+	 *  This has not been modified from the tutorial series I used to start this game.  
 	 * 
 	 **/
 	public void setLightMap(int x, int y, int value){
 
 		
-		// This creates a really shitty effect with snowflakes, gives the finges of the snowflakes way more colour, almost as if the alpha is being pumped up... 
+		// This creates a really shitty effect with snowflakes, gives the fringes of the snowflakes way more colour, almost as if the alpha is being pumped up... 
 		/*
 		// Are we trying to apply light to the background image? 
 		if(zBuffer[x + y * pW] == -1){
@@ -228,8 +258,6 @@ public class Renderer{
 
 
 
-
-		// ...? this is alpha blending not really lighting...? 
 		// Process Lighting: Merge Pixels array with LightMap array
 		for(int i = 0; i < pixels.length; i++ ){
 
@@ -252,16 +280,18 @@ public class Renderer{
 
 		}
 		
-		// WIP draw things not to be effected by lighting
+		// TODO: draw things not to be effected by lighting
 		
-
-
 
 		// reset processing to false for next frame
 		processing = false;
 
 	}
 
+	
+	/**
+	 * Draws text. 
+	 */
 	public void drawText(String text, int offX, int offY, int color){
 
 		//Shift image to the current screen space alignment
@@ -295,17 +325,17 @@ public class Renderer{
 					}
 				}
 			}
+			
 			//shift offset to right edge of last char
 			offset += font.getWidths()[unicode];
 
-			//System.out.println("Char: "+ text.charAt(i));
-			//System.out.println("Char width: "+ font.getWidths()[unicode]);
-			//System.out.println("Char FontImage offset: "+ font.getOffsets()[unicode]);
-			//System.out.println("Char Renderer Offset: " + offset);
 		}
 	}
 
 
+	/**
+	 * Draws an image.  
+	 */
 	public void drawImage(Image image, int offX, int offY){
 		
 		
@@ -391,6 +421,10 @@ public class Renderer{
 
 	}
 
+	
+	/**
+	 * Draws a single tile of a tile image. 
+	 */
 	public void drawImageTile(ImageTile tile, int offX, int offY, int tileX, int tileY){
 		
 
@@ -473,7 +507,9 @@ public class Renderer{
 	}
 
 
-
+	/**
+	 * Draws a hollow rectangle.  
+	 */
 	public void drawRect(int offX, int offY, int width, int height, int color){	
 
 		//Shift rectangle to the current screen space alignment
@@ -560,7 +596,9 @@ public class Renderer{
 	}
 
 
-
+	/**
+	 * Draws a filled rectangle.
+	 */
 	public void drawFillRect(int offX, int offY, int width, int height, int color){
 
 		//Shift rectangle to the current screen space alignment

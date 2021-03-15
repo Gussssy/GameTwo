@@ -17,31 +17,27 @@ import com.gussssy.gametwo.game.objects.testObjects.ProjectileLauncher;
 import com.gussssy.gametwo.game.pathfinding.PathFinderTwo;
 
 /**
- * A Map used for testing various collison detection systems. 
+ * A Map used for testing the various collision detection systems. 
  */
 public class CollisionWorld extends Level {
 	
+	// Controls day night cycle
 	DayNightCycle cycle;
 
 	public CollisionWorld(String levelImagePath, String backgroundImagePath, GameManager gm) {
 		super(levelImagePath, backgroundImagePath, gm);
 		
 		
-		// debug settings
-		//GameManager.showDebug = true;
+		// render tile collisins on this map
 		DebugPanel.showTileCollision = true;
 		
 		// collision test object
+		//		rectangle object that will follow the cursor, will change color when colliding
 		gm.addObject(new CollisionTesterObject(5,5, gm));
 		
-		// player
+		// player - free movement enabled
 		GameManager.player.setPlayerLocation(7, 47);
-		//GameManager.player.setPlayerLocation(2652.0002f, 196.6666f);
-		//GameManager.player.setPlayerLocation(2712f, 228.9998f);
-		//GameManager.player.setPlayerLocation(2747.0f, 198.9998f);
-		GameManager.player.setDirection(1);
-		GameManager.player.freeMovementEnabled = true;
-		//GameManager.player.
+		GameManager.player.setFreeMovementEnabled(true);
 		
 		// a friendly bot bot
 		BotBot botbot = new BotBot(7,47,gm);
@@ -61,12 +57,14 @@ public class CollisionWorld extends Level {
 		gm.addObject(new Platform(13, 48));
 		gm.addObject(new Platform(16, 46));
 		
-		// projectile launcher
+		// projectile launcher, will launch grenades when clicked
 		gm.addObject(new ProjectileLauncher(167,13,155,179,4,27));
 		
+		// Music
 		//SoundManager.introChromeSparks.play();
 		//SoundManager.onlyTime.play();
 		
+		// Day night cycle
 		cycle = new DayNightCycle(gm);
 		
 		// grenade modification

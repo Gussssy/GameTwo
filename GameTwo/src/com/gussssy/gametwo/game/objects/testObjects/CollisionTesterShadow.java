@@ -33,8 +33,8 @@ public class CollisionTesterShadow extends Projectile {
 		hitBox = new AABBComponent(this, 1);
 		addComponent(hitBox);
 		
-		tileHitBox2.color = 0xff000088;
-		tileHitBox2.collidingColor = 0xffffff00;
+		tileHitBox2.setColor(0xff000088);
+		tileHitBox2.setCollidingColor(0xffffff00);
 		
 		elasticity = 1.0f;
 		
@@ -57,12 +57,12 @@ public class CollisionTesterShadow extends Projectile {
 	}
 
 	@Override
-	public void render(GameContainer gc, Renderer r) {
+	public void render(Renderer r) {
 		r.drawFillRect((int)posX, (int)posY, width, height, 0x44111188);
-		renderComponents(gc, r);
+		renderComponents(r);
 		
-		if(tileHitBox1 != null)tileHitBox1.render(gc, r);
-		if(tileHitBox2 != null)tileHitBox2.render(gc, r);
+		if(tileHitBox1 != null)tileHitBox1.render(r);
+		if(tileHitBox2 != null)tileHitBox2.render(r);
 		
 	}
 	

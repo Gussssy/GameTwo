@@ -55,3 +55,22 @@ https://freesound.org/people/Bertsz/sounds/500910/
 portal_open
 https://freesound.org/people/alanmcki/sounds/401324/
 
+
+light_buzz
+https://freesound.org/people/adamamazing/sounds/274477/
+
+
+electric_spark_1
+electric_spark_2
+electric_spark_3
+https://freesound.org/people/weaveofkev/sounds/396240/
+
+
+laserGun_1 --> laserGun_6
+https://freesound.org/people/soundslikewillem/sounds/190707/
+
+laser_gun_7
+https://freesound.org/people/Smoker858/sounds/508854/
+
+snow_step_a_1 --> snow_step_a_9
+https://freesound.org/people/tim.kahn/sounds/28661/

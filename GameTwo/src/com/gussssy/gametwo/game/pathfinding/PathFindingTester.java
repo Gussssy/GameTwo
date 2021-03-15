@@ -7,6 +7,9 @@ import com.gussssy.gametwo.engine.Renderer;
 import com.gussssy.gametwo.engine.gfx.Image;
 import com.gussssy.gametwo.game.GameManager;
 import com.gussssy.gametwo.game.level.LevelTile;
+import com.gussssy.gametwo.game.objects.GameObject;
+import com.gussssy.gametwo.game.objects.ObjectType;
+import com.gussssy.gametwo.game.objects.npc.NPC;
 import com.gussssy.gametwo.game.objects.npc.NPCActionType;
 
 public class PathFindingTester {
@@ -104,14 +107,19 @@ public class PathFindingTester {
 
 
 
-
-
-		
-
-		// Set Test BotBot to path mode (idle behaviour)
+		// Set all NPCs to path behaviour when '9' is pressed
 		if(gc.getInput().isKeyDown(KeyEvent.VK_9)){
 
-			gm.botbot.actionType = NPCActionType.PATH;
+			for(GameObject o : gm.getObjects()){
+				
+				if(o.getObjectType() == ObjectType.NPC){
+					
+					// the object is an npc so can be cast to an NPC
+					NPC npc = (NPC)o;
+					npc.actionType = NPCActionType.PATH;
+					
+				}
+			}
 		}
 
 

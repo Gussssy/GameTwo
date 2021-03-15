@@ -23,15 +23,14 @@ public abstract class Level {
 	int playerTileX, playerTileY;
 	
 	
-	
-	
-	
-	
 	// just to make the code easier to read... 
 	int tileSize = GameManager.TS;
 	
 	// dont love this here asI dont so this anywhere else
 	GameManager gm;
+	
+	// Testing if this is good design..
+	public static float gravity = 9.8f;
 	
 	
 	
@@ -59,6 +58,7 @@ public abstract class Level {
 		
 		levelMap = new Image(levelImagePath);
 		levelBackground = new Image(backgroundImagePath);
+		
 		
 		
 		loadLevel(levelMap);
@@ -123,6 +123,12 @@ public abstract class Level {
 		int marbleBrick = -1907493;
 		int marblePillar = -2369839;
 		int ice = -8941840;
+		int redRock = -4498876;
+		int spaceCraftBlock1 = -7039852;
+		int spaceCraftInteriorWindow1 = -7165492;
+		int spaceCraftInteriorPanel1 = -8618884;
+		int spaceCraftExteriorGlass = -5921079;
+		int spaceCraftInteriorGlass = -3749909;
 
 		for(int y = 0; y < levelHeight; y++){
 			for(int x = 0; x < levelWidth; x++){
@@ -188,7 +194,23 @@ public abstract class Level {
 						
 					}else if(levelImage.getPixels()[tileIndex] ==  ice){
 						levelTiles[x + y * levelWidth] = new LevelTile(10, x, y);
-					}else { 
+					}else if(levelImage.getPixels()[tileIndex] ==  redRock){
+						levelTiles[x + y * levelWidth] = new LevelTile(11, x, y);
+						
+					} else if(levelImage.getPixels()[tileIndex] ==  spaceCraftBlock1){
+						levelTiles[x + y * levelWidth] = new LevelTile(12, x, y);
+						
+					} else if(levelImage.getPixels()[tileIndex] ==  spaceCraftInteriorWindow1){
+						levelTiles[x + y * levelWidth] = new LevelTile(-6, x, y);
+						
+					} else if(levelImage.getPixels()[tileIndex] ==  spaceCraftInteriorPanel1){
+						levelTiles[x + y * levelWidth] = new LevelTile(-7, x, y);
+						
+					} else if(levelImage.getPixels()[tileIndex] ==  spaceCraftExteriorGlass){
+						levelTiles[x + y * levelWidth] = new LevelTile(13, x, y);
+					} else if(levelImage.getPixels()[tileIndex] ==  spaceCraftInteriorGlass){
+						levelTiles[x + y * levelWidth] = new LevelTile(-8, x, y);
+					} else { 
 						// UNREGONISED PIXEL FROM TEMPLATE IMAGE
 						System.out.println("Unrecognised input pixel colour: " + levelImage.getPixels()[tileIndex]);
 					}
@@ -296,7 +318,23 @@ public abstract class Level {
 					r.drawImage(Textures.marblePillar, x* tileSize, y * tileSize);
 				}else if(levelTiles[x + y * levelWidth].getType() == 10){
 					r.drawImage(Textures.ice, x* tileSize, y * tileSize);
-				}else{
+				}else if(levelTiles[x + y * levelWidth].getType() == 11){
+					r.drawImage(Textures.redRock, x* tileSize, y * tileSize);
+					
+					
+				} else if(levelTiles[x + y * levelWidth].getType() == 12){
+					r.drawImage(Textures.spaceCraftBlock1, x* tileSize, y * tileSize);
+					
+				} else if(levelTiles[x + y * levelWidth].getType() == -6){
+					r.drawImage(Textures.spaceCraftInteriorWindow1, x* tileSize, y * tileSize);
+					
+				} else if(levelTiles[x + y * levelWidth].getType() == -7){
+					r.drawImage(Textures.spaceCraftInteriorPanel1, x* tileSize, y * tileSize);
+				} else if(levelTiles[x + y * levelWidth].getType() == 13){
+					r.drawImage(Textures.spaceCraftExteriorGlass, x* tileSize, y * tileSize);
+				} else if(levelTiles[x + y * levelWidth].getType() == -8){
+					r.drawImage(Textures.spaceCraftInteriorGlass, x* tileSize, y * tileSize);
+				} else {
 					// AIR TILE
 					// Must be an air tile
 					if(levelTiles[x+y*levelWidth].accessible == true && GameManager.showDebug && DebugPanel.showPathMap)r.drawImage(Textures.marker, x * tileSize, y * tileSize);
@@ -310,7 +348,7 @@ public abstract class Level {
 					if(levelTiles[x+y*levelWidth].accessible == true)r.drawImage(Textures.node, x * tileSize, y * tileSize);
 				}
 				
-				if(DebugPanel.showAwareness){
+				if(DebugPanel.showVision){
 					if(levelTiles[x+y*levelWidth].checked)r.drawImage(Textures.tileFrame, x * tileSize, y * tileSize);
 				}
 				
@@ -322,6 +360,19 @@ public abstract class Level {
 				
 			}
 		}
+		
+	}
+	
+	
+	/**
+	 * Set the players location (in tiles).
+	 * 
+	 * @param tileX the x coordinate of the tile where the player will be located
+	 * @param tileY the y coordinate of the tile where the player will be located
+	 */
+	public void setPlayerLocation(int tileX, int tileY){
+		
+		GameManager.player.setPlayerLocation(tileX, tileY);
 		
 	}
 	

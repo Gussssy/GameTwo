@@ -8,6 +8,7 @@ import com.gussssy.gametwo.engine.gfx.Image;
 import com.gussssy.gametwo.game.GameManager;
 import com.gussssy.gametwo.game.SoundManager;
 import com.gussssy.gametwo.game.components.AABBComponent;
+import com.gussssy.gametwo.game.debug.DebugPanel;
 import com.gussssy.gametwo.game.objects.GameObject;
 
 @SuppressWarnings("unused")
@@ -15,10 +16,10 @@ public class NPCSpawner extends GameObject{
 	
 	private Image spawnerImage = new Image("/Spawner1.png");
 	private String npcTag;
-	private int maxSpawns = 50;
+	private int maxSpawns = 20;
 	private int activeSpawns = 0;
 	//private int cooldown = 180;
-	private int cooldown = 5;
+	private int cooldown = 1;
 	private boolean onCooldown = false;
 	private int counter = cooldown;
 	private ArrayList<NPC> spawns = new ArrayList<NPC>();
@@ -36,6 +37,8 @@ public class NPCSpawner extends GameObject{
 
 	@Override
 	public void update(GameContainer gc, GameManager gm, float dt) {
+		
+		DebugPanel.message1 = "Spawns: " + activeSpawns;
 		
 		// remove any dead spawned npcs from
 		for(int i = spawns.size()-1; i >= 0 ; i-- ){
@@ -68,7 +71,7 @@ public class NPCSpawner extends GameObject{
 	}
 
 	@Override
-	public void render(GameContainer gc, Renderer r) {
+	public void render(Renderer r) {
 		
 		// -3 on y axis because the spawner image is 16*19 pixels, need to move up by 3
 		r.drawImage(spawnerImage, (int)tileX * GameManager.TS, (int)tileY * GameManager.TS -3);
@@ -111,6 +114,11 @@ public class NPCSpawner extends GameObject{
 			badSmartBotBot.setTeam(1);
 			gm.addObject(badSmartBotBot);
 			spawns.add(badSmartBotBot);
+			break;
+		case "ice_wizard" : 
+			IceWizard i = new IceWizard(tileX, tileY);
+			gm.addObject(i);
+			spawns.add(i);
 			break;
 			
 			

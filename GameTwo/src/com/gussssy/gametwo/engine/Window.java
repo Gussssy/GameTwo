@@ -12,6 +12,9 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 
+/**
+ * 
+ */
 public class Window{
 	
 	private JFrame frame;
@@ -20,8 +23,15 @@ public class Window{
 	private BufferStrategy bs;
 	private Graphics g;
 	
+	/**
+	 *  Window constructor. 
+	 *  
+	 *  Sets up the canvas, the containing frame, the buffer strategy and replaces the default cursor with nothing so a custom cursor can be used.  
+	 */
 	public Window(GameContainer gc){
 		
+		
+		// The canvas - the game display
 		image = new BufferedImage(gc.getWidth(), gc.getHeight(), BufferedImage.TYPE_INT_RGB);	//Buffered = in RAM
 		Dimension s = new Dimension((int)(gc.getWidth() * gc.getScale()), (int)(gc.getHeight() * gc.getScale()));
 		canvas = new Canvas();
@@ -29,6 +39,8 @@ public class Window{
 		canvas.setMaximumSize(s);
 		canvas.setMinimumSize(s);
 		
+		
+		// The frame containing the canvas
 		frame = new JFrame(gc.getTitle());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
@@ -39,32 +51,41 @@ public class Window{
 		frame.setVisible(true);
 		
 		
+		
+		
+		
 		// Cursor
-		// Transparent 16 x 16 pixel cursor image.
+		// 	- 	Replace the cursor with a blank image so a custom cursor can be used.
+		
+		// Transparent 16 x 16 cursor image.
 		BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
-		// Create a new blank cursor.
+		
+		// Create a new blank cursor using the above image
 		Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
 		    cursorImg, new Point(0, 0), "blank cursor");
+		
 		// Set the blank cursor to the JFrame.
 		frame.getContentPane().setCursor(blankCursor);
 		
 		
 		
-		// this should allow tab to be used for key events rather then focus traversal
-		//frame.setFocusTraversalKeysEnabled(false);
-		canvas.setFocusTraversalKeysEnabled(false);		// this works, above did not. 
 		
-		// this does not do what I want it too. 
-		//frame.toFront();
-		//frame.setAlwaysOnTop(true);
-		//frame.requestFocus();
+	
+		// allow the tab key to be used for game key events rather then the default focus traversal
+		canvas.setFocusTraversalKeysEnabled(false);
 		
+		
+		
+		// Buffer strategy
 		canvas.createBufferStrategy(2);
 		bs = canvas.getBufferStrategy();
 		g = bs.getDrawGraphics();
-		//System.out.println(g.toString());
+		
 	}
 	
+	/**
+	 * Draw the next frame onto the canvas
+	 */
 	public void update(){
 		g.drawImage(image, 0, 0, canvas.getWidth(), canvas.getHeight(), null);
 		bs.show();

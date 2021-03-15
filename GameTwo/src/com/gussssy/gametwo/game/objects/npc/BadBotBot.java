@@ -12,15 +12,19 @@ import com.gussssy.gametwo.game.components.HealthBar;
 import com.gussssy.gametwo.game.debug.DebugPanel;
 import com.gussssy.gametwo.game.objects.GameObject;
 import com.gussssy.gametwo.game.objects.projectile.Bullet;
+import com.gussssy.gametwo.game.particles.ElectricEffect;
 import com.gussssy.gametwo.game.weapon.Pistol;
 
+/**
+ * An NPC almost identical to BotBot but with red eyes and by default is on the enemy team.
+ */
 public class BadBotBot extends NPC{
 
 	private Image image = new Image("/BadBotBot.png");
-	//private Image image = new Image("/goose.png");
-	SoundClip hurt = new SoundClip("/audio/hurt1.wav");
 	
 	Light light = new Light(32, 0xffff0000);
+	
+	ElectricEffect damagedEffect;
 
 	public BadBotBot(int tileX, int tileY){
 
@@ -29,21 +33,19 @@ public class BadBotBot extends NPC{
 		this.tileY = tileY;
 		this.posX = tileX * GameManager.TS;
 		this.posY = tileY * GameManager.TS;
+		
+		// padding 
 		this.leftRightPadding = 3;
 		this.topPadding = 2;
 		this.width = 16 - 2*leftRightPadding;
 		this.height = 16 - topPadding;
 		
+		// hitbox
 		hitBox = new AABBComponent(this);
 		addComponent(hitBox);
 		
 		
-		// moved these too charachter
-		//health = 100;
-		//addComponent(new HealthBar(this));
-		
-		
-		//actionType = NPCActionType.ATTACK;			// moved to NPC so I dont need to chnage it in two places
+		//actionType = NPCActionType.ATTACK;
 		//actionType = NPCActionType.IDLE;
 		
 		weapon = new Pistol(this);
@@ -51,7 +53,7 @@ public class BadBotBot extends NPC{
 		team = 1;
 		direction = 1;
 		
-		//System.out.println("making new BadBotBot at: " + tileX + ", " + tileY);
+		damagedEffect = new ElectricEffect((int)posX, (int)posY);
 	}
 
 	@Override
@@ -59,7 +61,7 @@ public class BadBotBot extends NPC{
 
 		switch(actionType){
 		case IDLE:
-			idle(gm);
+			idlePathing(gm);
 			break;
 		case PATH: 
 			break;
@@ -78,19 +80,33 @@ public class BadBotBot extends NPC{
 		npcUpdate(gc, gm, dt);
 
 
-
+		if(health < 50){
+			damagedEffect.update(gc, gm, dt);
+			damagedEffect.setLocationX((int)posX);
+			damagedEffect.setLocationY((int)posY);
+		}
 
 
 	}
 
 	@Override
-	public void render(GameContainer gc, Renderer r) {
+	public void render(Renderer r) {
 
 		r.drawImage(image, (int)posX, (int)posY);
 
 		// dont like that tgis is here, need to add this to each new npc class...
-		renderComponents(gc,r);
+		renderComponents(r);
 		r.drawLight(light, (int)posX+14, (int)posY+14);
+		
+		// if sufficiently damaged this badbotbot will have an electric effect
+		if(health < 50){
+			damagedEffect.render(r);
+		}
+		
+		
+		if(GameManager.showDebug){
+			vision.renderVision(r);
+		}
 
 	}
 
@@ -123,7 +139,7 @@ public class BadBotBot extends NPC{
 			hp.healthChanged(-10);
 
 			if(health < 0){
-				SoundManager.dead.play();
+				//SoundManager.dead.play();
 				hp.healthChanged(100);
 			}
 

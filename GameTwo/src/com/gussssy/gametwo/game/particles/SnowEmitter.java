@@ -111,7 +111,7 @@ ArrayList<SnowParticle> particles = new ArrayList<SnowParticle>();
 	}
 
 	@Override
-	public void render(GameContainer gc, Renderer r) {
+	public void render(Renderer r) {
 		
 		
 		for(SnowParticle p : particles){

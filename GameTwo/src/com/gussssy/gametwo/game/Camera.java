@@ -92,6 +92,7 @@ public class Camera{
 	public void render(Renderer r){
 		r.setCamX((int)offX);
 		r.setCamY((int)offY);
+		System.out.println("CAMWERA RENDER");
 		
 	}
 

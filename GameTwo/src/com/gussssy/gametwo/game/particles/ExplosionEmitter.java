@@ -13,8 +13,6 @@ import com.gussssy.gametwo.game.objects.GameObject;
 
 public class ExplosionEmitter extends ParticleEmitter{
 
-	// location
-	//int tileX, tileY;
 	
 	boolean sound = false;
 
@@ -34,7 +32,6 @@ public class ExplosionEmitter extends ParticleEmitter{
 	int minLifeTime = 120;
 	int maxLifeTime = 240;
 	int cooldown = 120;
-	//int color = 0x77ffffff;
 	
 	
 	// Varied Location variables
@@ -71,8 +68,7 @@ public class ExplosionEmitter extends ParticleEmitter{
 		this.posX = tileX * GameManager.TS;
 		this.posY = tileY * GameManager.TS;
 		this.width = 32;
-		this.height = 32;
-		//addComponent(new AABBComponent(this));			I dont see a need for this to have a hit box 
+		this.height = 32; 
 		counter = cooldown;
 		this.autoEmit = autoEmit;
 
@@ -248,7 +244,7 @@ public class ExplosionEmitter extends ParticleEmitter{
 
 
 	@Override
-	public void render(GameContainer gc, Renderer r) {
+	public void render(Renderer r) {
 
 		//r.drawImage(goose, (int)posX, (int)posY);
 
@@ -261,7 +257,7 @@ public class ExplosionEmitter extends ParticleEmitter{
 		
 		if(particles.size() != 0)r.drawLight(light, (int)explosionPosX, (int)explosionPosY);
 
-		renderComponents(gc, r);
+		renderComponents(r);
 
 	}
 

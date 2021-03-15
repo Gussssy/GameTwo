@@ -6,6 +6,7 @@ import com.gussssy.gametwo.game.objects.npc.BadBotBot;
 import com.gussssy.gametwo.game.objects.npc.BotBot;
 import com.gussssy.gametwo.game.objects.npc.Goose;
 import com.gussssy.gametwo.game.objects.npc.IceWizard;
+import com.gussssy.gametwo.game.objects.npc.NPCSpawner;
 import com.gussssy.gametwo.game.objects.npc.Rabbit;
 import com.gussssy.gametwo.game.objects.npc.SmartBotBot;
 import com.gussssy.gametwo.game.particles.TundraWeather;
@@ -50,6 +51,11 @@ public class IceSpike extends Level {
 	
 	TundraWeather weather = new TundraWeather(gm);
 	
+	// spawners
+	NPCSpawner spawner = new NPCSpawner(83,99, "badbotbot");
+	NPCSpawner wizardSpawner = new NPCSpawner(1,100, "ice_wizard");
+	NPCSpawner badSpawner = new NPCSpawner(83,99, "badsmartbot");
+	
 	
 	
 
@@ -63,7 +69,7 @@ public class IceSpike extends Level {
 		//badbot.setTeam(0);
 		
 		gm.addObject(wizard);
-		gm.addObject(wizard1);
+		/**gm.addObject(wizard1);
 		gm.addObject(wizard2);
 		gm.addObject(wizard3);
 		gm.addObject(wizard4);
@@ -77,14 +83,17 @@ public class IceSpike extends Level {
 		gm.addObject(wizard12);
 		gm.addObject(wizard13);
 		gm.addObject(wizard14);
-		gm.addObject(wizard15);
-		gm.addObject(goose);
-		gm.addObject(goose1);
-		gm.addObject(goose2);
-		gm.addObject(bot);
+		gm.addObject(wizard15);*/
+		//gm.addObject(goose);
+		//gm.addObject(goose1);
+		//gm.addObject(goose2);
+		//gm.addObject(bot);
+		//gm.addObject(smartbot);
 		gm.addObject(badbot);
-		gm.addObject(smartbot);
-		gm.addObject(rabbit);
+		//gm.addObject(rabbit);
+		gm.addObject(spawner);
+		gm.addObject(wizardSpawner);
+		gm.addObject(badSpawner);
 		
 		PathFinderTwo.setPathMap(gm, 20, 103);
 		

@@ -38,7 +38,7 @@ public abstract class Weapon extends Component {
 	
 	
 	@Override
-	public void render(GameContainer gc, Renderer r) {
+	public void render(Renderer r) {
 		
 		// Diables rendering for npcs, player only
 		if(wielder.getTag() != "player"){

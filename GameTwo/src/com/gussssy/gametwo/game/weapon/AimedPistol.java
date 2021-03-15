@@ -4,6 +4,7 @@ package com.gussssy.gametwo.game.weapon;
 import com.gussssy.gametwo.engine.GameContainer;
 import com.gussssy.gametwo.engine.Renderer;
 import com.gussssy.gametwo.game.GameManager;
+import com.gussssy.gametwo.game.SoundManager;
 import com.gussssy.gametwo.game.objects.GameObject;
 import com.gussssy.gametwo.game.objects.projectile.LaserBullet;
 import com.gussssy.gametwo.game.objects.tempobjects.TempLine;
@@ -83,6 +84,9 @@ public class AimedPistol extends Weapon{
 			
 			// create a laser bullet that will travel towards the psotion the mouse was clicked
 			gm.addObject(new LaserBullet(wielder.getPosX(), wielder.getPosY(), vx, vy, wielder));
+			
+			// play a sound
+			SoundManager.laserGunSounds.playRandom();
 		}
 		
 	}
@@ -115,6 +119,9 @@ public class AimedPistol extends Weapon{
 		
 		gm.addObject(new LaserBullet(wielder.getPosX(), wielder.getPosY(), vx, vy, wielder));
 		
+		// play a sound
+		SoundManager.laserGunSounds.playRandom();
+		
 	}
 
 
@@ -124,7 +131,7 @@ public class AimedPistol extends Weapon{
 	 * - also only for player, dont render for botbots 
 	 */
 	@Override
-	public void render(GameContainer gc, Renderer r) {
+	public void render(Renderer r) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -171,7 +171,7 @@ public class Spell3Emitter extends SpellEmitter {
 	}
 
 	@Override
-	public void render(GameContainer gc, Renderer r) {
+	public void render(Renderer r) {
 		
 
 		for(CircularMotionSpellParticle p : particles){

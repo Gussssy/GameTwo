@@ -23,7 +23,6 @@ public class Platform extends GameObject{
 		
 		this.tag = "platform";
 		this.objectType = ObjectType.ENVIRONMENT;
-		this.collisionType = CollisionType.PLATFORM;
 		this.width = 32;
 		this.height = 16;
 		this.posX = tileX * GameManager.TS;
@@ -66,10 +65,10 @@ public class Platform extends GameObject{
 	}
 
 	@Override
-	public void render(GameContainer gc, Renderer r){
+	public void render(Renderer r){
 		
 		r.drawFillRect((int)posX, (int)posY, width, height, color);
-		this.renderComponents(gc, r);
+		this.renderComponents(r);
 		
 	}
 

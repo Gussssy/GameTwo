@@ -50,11 +50,11 @@ public abstract class Item extends GameObject{
 	}
 
 	@Override
-	public void render(GameContainer gc, Renderer r) {
+	public void render(Renderer r) {
 
 		r.drawImage(itemImage, (int)posX, (int)posY);
 		
-		this.renderComponents(gc, r);
+		this.renderComponents(r);
 		
 	}
 

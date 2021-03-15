@@ -168,14 +168,14 @@ public class CollisionTesterObject extends GameObject{
 	}
 
 	@Override
-	public void render(GameContainer gc, Renderer r) {
+	public void render(Renderer r) {
 		r.drawFillRect((int)posX, (int)posY, width, height, 0xffddddcc);
 		//r.drawFillRect((int)(posX + vx), (int)(posY + vy), width, height, 0x55ffffff);
 		r.drawLine((int)(posX+width/2), (int)(posY+height/2), (int)(posX + vx + width/2), (int)(posY + vy  + height/2), 0xff000000);
 		
 		buttons.render(r);
 		
-		renderComponents(gc, r);
+		renderComponents(r);
 		
 	}
 

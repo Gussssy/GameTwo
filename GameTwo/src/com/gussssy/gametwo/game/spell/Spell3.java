@@ -79,8 +79,8 @@ public class Spell3 extends Spell {
 	}
 
 	@Override
-	public void render(GameContainer gc, Renderer r) {
-		emitter.render(gc, r);
+	public void render(Renderer r) {
+		emitter.render(r);
 		
 	}
 

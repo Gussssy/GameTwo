@@ -13,41 +13,46 @@ import com.gussssy.gametwo.game.level.Arena2;
 import com.gussssy.gametwo.game.level.Arena5;
 import com.gussssy.gametwo.game.level.Arena6;
 import com.gussssy.gametwo.game.level.CollisionWorld;
-import com.gussssy.gametwo.game.level.FlatMap;
 import com.gussssy.gametwo.game.level.IceSpike;
 import com.gussssy.gametwo.game.level.Level;
 import com.gussssy.gametwo.game.level.LevelTile;
 import com.gussssy.gametwo.game.level.MyPalace;
 import com.gussssy.gametwo.game.level.RabbitHills;
+import com.gussssy.gametwo.game.level.RedPlanet;
 import com.gussssy.gametwo.game.level.SnowMap1;
+import com.gussssy.gametwo.game.level.SpaceStationMap;
 import com.gussssy.gametwo.game.level.WaterSiege;
 import com.gussssy.gametwo.game.level.WaterTestMap;
 import com.gussssy.gametwo.game.objects.GameObject;
-import com.gussssy.gametwo.game.objects.npc.BadBotBot;
-import com.gussssy.gametwo.game.objects.npc.BotBot;
-import com.gussssy.gametwo.game.objects.npc.Goose;
-import com.gussssy.gametwo.game.objects.npc.SmartBotBot;
 import com.gussssy.gametwo.game.objects.player.Player;
-import com.gussssy.gametwo.game.objects.testObjects.TestObject;
-import com.gussssy.gametwo.game.pathfinding.PathFinder;
+import com.gussssy.gametwo.game.particles.TileDestruction;
 import com.gussssy.gametwo.game.physics.Physics;
 import com.gussssy.gametwo.game.ui.HUD;
 import com.gussssy.gametwo.game.ui.TabMenu;
 
 /**
- * Program entry point. Initialises the Game.
- *  
- *  Responsible for calling update and render on the GameObjects, level and various other game components each frame.
+ * GameManger plays a central role in the operation of the game:
+ * <ul>
+ * <li>Contains the objects list, calling update and render on each contained object each frame.
+ * <li>Holds the events list, UI such as the tab menu and the HUD. Updates and renders these too.
+ * <li>Holds the currently loaded level and provides other objects access to it.
+ * <li>Calls update on Physics which detects collisions.
+ * </ul>
  **/
 @SuppressWarnings("unused")
 public class GameManager extends AbstractGame{
 
-	// Tile Size
+	/**
+	 * The size of the tiles on the x and y axis, in pixels. 
+	 * <p>
+	 * The Game has been developed using 16*16 tiles. This could change in the future.  
+	 */
 	public static final int TS = 16;
 
 	// Game Components
 	private Camera camera;
-	private static GameContainer gc;
+	
+	// Renderer - used to set the ambient colour via the GameManager
 	private static Renderer r;
 
 	// Cursor Image
@@ -57,18 +62,26 @@ public class GameManager extends AbstractGame{
 	private HUD hud = new HUD();
 
 	// TAB MENU 
-	private TabMenu tabMenu = new TabMenu();				
+	private TabMenu tabMenu = new TabMenu();
+	
+	/**
+	 * The Payer. GameObject that is controlled by user input. 
+	 */
+	public static Player player = new Player(1,11);
 
 	// Level Variables
 	private LevelTile[] levelTiles;			// need to remove this from here
 	private int levelWidth, levelHeight;	// need to remove this from here
-	private float gravity = 10;				// Should this be here? Maybe a variable of Level?
+	//private float gravity = 10;				// Should this be here? Maybe a variable of Level?
 	/** The currently loaded level */
 	public Level level;						// The currently loaded level
 
 	// Contains all the GameObejects currently active in the game
 	private ArrayList<GameObject> objects = new ArrayList<GameObject>(); 
-
+	
+	//private ArrayList<Event> events = new ArrayList<Event>();
+	// events will be managed by separate class Event Manager (is static for now)
+	
 
 	// Debugging Variables
 	/** When true the debug messages will be rendered*/
@@ -79,36 +92,35 @@ public class GameManager extends AbstractGame{
 	public static Log log = new Log();
 	
 	//Enable or Disable friendly fire
-	public static boolean friendlyFire = true; //(would like to move this to a more appropriate place)
+	public static boolean friendlyFire = false; //(would like to move this to a more appropriate place)
 
-	// Efficiency Testing
+	// Update Speed testing variables
 	private long lastUpdateTime; 
 	private long totalUpdateTime = 0;
 	private int updates;
 	private boolean testUpdateTime = false; 
 
-	//Gameobjects that I want easy access too
-	public BotBot botbot = new BotBot(1, 11, this);
-	public static Player player = new Player(1,11);
-	TestObject test = new TestObject(17, 12);
-	BadBotBot badbot = new BadBotBot(5,6);
-	Goose goose2 = new Goose(2,15);
-	SmartBotBot smartBot = new SmartBotBot(17,12,this);
+	
+	
+	
 	
 	// WIP 
 	// volume test - apprently i cant exceed a value of  
 	private float volume = 5f;
+	
+	private Image spaceXLogo = new Image("/spacex_logo.png");
 
 	
 	/**
 	 * GameManager Constructor.
 	 * 
-	 *  Intialises the game. 
+	 *  Initializes the game. 
 	 **/
 	public GameManager(){
 
 		// INIT TEXTURES
 		Textures.init();
+		SoundManager.init();
 
 		// INIT PLAYER 
 		objects.add(player);
@@ -117,21 +129,22 @@ public class GameManager extends AbstractGame{
 		//level = new Arena2("/Arena2.png", "/Area5_bg1.png", this);
 		//level = new Arena5("/Arena5_v3.png", "/Area5_bg1.png", this);
 		//level = new WaterTestMap("/watermap1.png","/Area5_bg1.png", this);
-		//level = new SnowMap1("/snowmap1.png","/nightsky_bg.png",this);
+		level = new SnowMap1("/snowmap1.png","/nightsky_bg.png",this);
 		//level= new CollisionWorld("/CollisionTestMap.png","/Area5_bg1.png", this);
 		//level = new Arena6("/Arena6.png","/Area5_bg1.png", this);
 		//level = new MyPalace("/Palace1.png", "/Area5_bg1.png", this);
 		//level = new IceSpike("/level/icespikemap.png","/Area5_bg1.png",this);
-		level = new RabbitHills(this);
+		//level = new RabbitHills(this);
 		//level = new WaterSiege(this);
 		//level = new FlatMap(this);
+		//level = new RedPlanet(this);
+		//level = new SpaceStationMap(this);
 
 		// CURSOR
 		cursor.setAlpha(true);
 
 		// CAMERA
 		camera = new Camera("player");
-		//camera = new Camera("botbot");
 	}
 
 
@@ -139,7 +152,7 @@ public class GameManager extends AbstractGame{
 
 /**
  * GameManager update. 
- * 
+ * <p>
  * Call update on the GameObjects, the level, HUD, Physics, log, camera and debug panel.
  * 
  * @param gc the GameContainer.
@@ -187,6 +200,24 @@ public class GameManager extends AbstractGame{
 		Physics.update();
 		
 		
+		// Update Events
+		EventManager.update(gc, this, dt);
+		
+		
+		
+		// TILE DESTRUCTION
+		// initial testing of tile destruction
+		if(gc.getInput().isButtonDown(1) && gc.getInput().isKey(KeyEvent.VK_E)){
+			
+			// REALLY WANT THE CURSOR CLASS HERE
+			// get the level tile - wont work when cam is offset 
+			int tileX = (gc.getInput().getMouseX() + gc.getRenderer().getCamX())/TS;
+			int tileY = (gc.getInput().getMouseY() + gc.getRenderer().getCamY())/TS;
+			LevelTile tile = getLevelTile(tileX, tileY);
+			EventManager.addEvent(new TileDestruction(tile));
+		}
+		
+		
 		
 		// Debug 
 		
@@ -209,19 +240,82 @@ public class GameManager extends AbstractGame{
 		// Toggle Player Free Movement be pressing 0
 		if(gc.getInput().isKeyDown(KeyEvent.VK_0)){
 
-			if(player.freeMovementEnabled){
+			if(player.isFreeMovementEnabled()){
 				// turn off free movement
-				player.freeMovementEnabled = false;
+				player.setFreeMovementEnabled(false);
 				SoundManager.turnOff.play();
 
 			}else{
 				// turn on free movement
-				player.freeMovementEnabled = true;
+				player.setFreeMovementEnabled(true);
 				SoundManager.enable.play();
 
 			}
 		}
 
+		
+		// Testing Loading Different Levels 22/2/21
+		if(gc.getInput().isKey(KeyEvent.VK_CONTROL)){
+			
+			System.out.println("CONTROL PRESSED");
+			
+			//level = new FlatMap(this);
+			//level = new RedPlanet(this);
+			//level = new SpaceStationMap(this);
+			
+			if(gc.getInput().isKeyDown(KeyEvent.VK_1)){
+				
+				unloadLevel();
+				level = new Arena2("/Arena2.png", "/Area5_bg1.png", this);
+				
+			}else if(gc.getInput().isKeyDown(KeyEvent.VK_2)){
+				
+				unloadLevel();
+				level = new Arena5("/Arena5_v3.png", "/Area5_bg1.png", this);
+				
+			}else if(gc.getInput().isKeyDown(KeyEvent.VK_3)){
+				
+				unloadLevel();
+				level = new WaterTestMap("/watermap1.png","/Area5_bg1.png", this);
+				
+			}else if(gc.getInput().isKeyDown(KeyEvent.VK_4)){
+				
+				unloadLevel();
+				level = new SnowMap1("/snowmap1.png","/nightsky_bg.png",this);
+				
+			}else if(gc.getInput().isKeyDown(KeyEvent.VK_5)){
+				
+				unloadLevel();
+				level= new CollisionWorld("/CollisionTestMap.png","/Area5_bg1.png", this);
+				
+			}else if(gc.getInput().isKeyDown(KeyEvent.VK_6)){
+				
+				unloadLevel();
+				level = new Arena6("/Arena6.png","/Area5_bg1.png", this);
+				
+			}else if(gc.getInput().isKeyDown(KeyEvent.VK_7)){
+				
+				unloadLevel();
+				level = new MyPalace("/Palace1.png", "/Area5_bg1.png", this);
+				
+			}else if(gc.getInput().isKeyDown(KeyEvent.VK_8)){
+				
+				unloadLevel();
+				level = new IceSpike("/level/icespikemap.png","/Area5_bg1.png",this);
+				
+			}else if(gc.getInput().isKeyDown(KeyEvent.VK_9)){
+				
+				unloadLevel();
+				level = new RabbitHills(this);
+				
+			}else if(gc.getInput().isKeyDown(KeyEvent.VK_MINUS)){
+				
+				unloadLevel();
+				level = new WaterSiege(this);
+				
+			}
+			
+		}
 
 
 		// -------------------------------------------------------------------------------------------------------
@@ -255,10 +349,7 @@ public class GameManager extends AbstractGame{
 			SoundManager.music.setVolume(volume);
 		}*/
 
-		// Reset the path map (old pathfinding alrorithm) needs to go
-		if(gc.getInput().isKeyDown(KeyEvent.VK_M)){
-			PathFinder.setPathMap(this, 1, 11);
-		}
+		
 
 		// Attempt at controlling volume
 		if(gc.getInput().isKeyDown(KeyEvent.VK_K)){
@@ -281,6 +372,21 @@ public class GameManager extends AbstractGame{
 		}
 
 
+	}
+	
+	
+	
+	/**
+	 * Purges the GameObjects in the objects list and re adds the player so a new level can be loaded. 
+	 */
+	private void unloadLevel(){
+		
+		// purge the objects list
+		objects.clear();
+		
+		EventManager.purge();
+		
+		objects.add(player);
 	}
 
 
@@ -382,7 +488,7 @@ public class GameManager extends AbstractGame{
 		// Sets ambient colour to full brightness
 		gc.getRenderer().setAmbientColor(-1);
 		
-		GameManager.gc = gc;
+		//GameManager.gc = gc;
 		GameManager.r = gc.getRenderer();
 
 	}
@@ -396,8 +502,12 @@ public class GameManager extends AbstractGame{
 		r.setAmbientColor(newAmbientColor);
 	}
 
+	
+	// testing something I spent ages drawing.. looks average
+	Image window = new Image("/observation_window.png");
 
-
+	
+	
 	/**
 	 * Renders the game.
 	 * 
@@ -410,7 +520,7 @@ public class GameManager extends AbstractGame{
 	 * 
 	 * - Renders text containing basic player position/state varibales etc
 	 * - Renders Debug Messages 1-12
-	 * - Renders the cursor (last so nbothing if drawn on top of it.) 
+	 * - Renders the cursor (last so nothing if drawn on top of it.) 
 	 * 
 	 * @param gc The GameContainer, used to access the Input class to check for Keyboard input.
 	 * @param r The renderer
@@ -418,13 +528,22 @@ public class GameManager extends AbstractGame{
 	@Override
 	public void render(GameContainer gc, Renderer r){
 
+		
+		
 		// Render the level
 		level.render(r);
+		
+		// testing observation window
+		//r.drawImage(window, 152*16, 21*16);
+		//r.drawImage(window, 31*16, 18*16);
 
 		// Render Game Objects
 		for(GameObject o : objects ){
-			o.render(gc, r);
+			o.render(r);
 		}
+		
+		//Render Events
+		EventManager.render(r);
 
 		// render the HUD
 		//hud.render(gc, r);
@@ -437,7 +556,10 @@ public class GameManager extends AbstractGame{
 		// render Debug display if active 
 		if(showDebug){
 			DebugPanel.render(gc,r);
+		
 		}
+		
+		
 
 		// Render the cursor. This must be last. 
 		r.drawImage(cursor, gc.getInput().getMouseX()+r.getCamX(), gc.getInput().getMouseY()+r.getCamY());
@@ -482,14 +604,6 @@ public class GameManager extends AbstractGame{
 		return levelTiles;
 	}
 
-	/**
-	 * Gets the gravity.
-	 * 
-	 * @return float representing the gravity
-	 */
-	public float getGravity() {
-		return gravity;
-	}
 
 	/**
 	 * Sets all the level tiles accessibility to true or false
@@ -574,12 +688,14 @@ public class GameManager extends AbstractGame{
 	//private static int gameHeight= 310;
 	//private static float scale = 5f;
 
+	
+	// BEST SiZE FOR DEBUGGING
 	// Normal Settings
 	//private static int gameWidth = 560;
 	//private static int gameHeight= 310;
 	//private static float scale = 4.0f;
 	//private static float scale = 3f;
-	//private static float scale = 2f;
+	//private static float scale = 1f;
 
 	// Large - (doesnt work at all with arena 2)
 	//private static int gameWidth = 960;
@@ -600,7 +716,7 @@ public class GameManager extends AbstractGame{
 	// 1440p/3 ish but fitted to screen Larger then above 
 	//private static int gameWidth = 782;
 	//private static int gameHeight= 440;
-	//private static float scale = 3f;
+	//private static float scale = 2f; // was 3
 
 	// Squareish, with space to see console
 	//private static int gameWidth = 550;

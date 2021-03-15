@@ -13,7 +13,7 @@ import com.gussssy.gametwo.game.objects.projectile.Grenade;
 @SuppressWarnings("unused")
 public class Pistol extends Weapon {
 	
-	SoundClip fire = new SoundClip("/audio/LaserGun.wav");
+	//SoundClip fire = new SoundClip("/audio/LaserGun.wav");
 	
 	public Pistol(GameObject wielder){
 		

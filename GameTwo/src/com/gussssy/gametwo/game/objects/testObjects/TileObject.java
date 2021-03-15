@@ -27,7 +27,7 @@ public class TileObject extends GameObject {
 	}
 
 	@Override
-	public void render(GameContainer gc, Renderer r) {
+	public void render(Renderer r) {
 		
 		// This object is not rendered
 		

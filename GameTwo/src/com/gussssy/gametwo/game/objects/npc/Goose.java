@@ -4,23 +4,28 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import com.gussssy.gametwo.engine.GameContainer;
 import com.gussssy.gametwo.engine.Renderer;
-import com.gussssy.gametwo.engine.gfx.ImageTile;
 import com.gussssy.gametwo.game.GameManager;
 import com.gussssy.gametwo.game.SoundManager;
+import com.gussssy.gametwo.game.Textures;
 import com.gussssy.gametwo.game.components.AABBComponent;
-import com.gussssy.gametwo.game.components.HealthBar;
 import com.gussssy.gametwo.game.objects.GameObject;
 import com.gussssy.gametwo.game.objects.ObjectType;
 
+
+/**
+ * An Goose NPC that honks every once in a while. 
+ */
 public class Goose extends NPC {
 	
-	private ImageTile gooseTile = new ImageTile("/goose_tile1.png", 25,32);
-	//private float animationState = 0;
 	
+	
+	// Controls timing of honks
 	int honkCounter;
 	
 	
-	
+	/**
+	 * 
+	 */
 	public Goose(int tileX, int tileY){
 		
 		this.tag = "goose";
@@ -31,19 +36,23 @@ public class Goose extends NPC {
 		this.posX = tileX * GameManager.TS;
 		this.posY = tileY * GameManager.TS;
 		
+		// This is the true dimaensions of the goose. 
 		/*width = 25;
 		height = 32;*/
 		
+		// These are the dimensions currently being used. They are rather off. 
 		this.topPadding = 2;
 		this.leftRightPadding = 3;
 		this.width = 16 - 2*leftRightPadding;
 		this.height = 16 - topPadding;
 		
-		this.addComponent(new AABBComponent(this));
-		addComponent(new HealthBar(this));
+		addComponent(new AABBComponent(this));
 		
-		honkCounter =  ThreadLocalRandom.current().nextInt(16000,48000);
+		// this should be here? it is done in charachter
+		//addComponent(new HealthBar(this));
 		
+		//honkCounter =  ThreadLocalRandom.current().nextInt(16000,48000);
+		honkCounter = 10; 
 		speed = 120;
 		animationSpeed = 12;
 	
@@ -62,13 +71,13 @@ public class Goose extends NPC {
 		
 		switch(actionType){
 		case IDLE:
-			idle(gm);
+			idlePathing(gm);
 			break;
 		case PATH: 
 			break;
 		case ATTACK:
 			aggroIdle(gm);
-			//pathToTargetObjectAndAttack(gm);
+
 		case FOLLOW:
 			break;
 		case WAIT:
@@ -99,12 +108,19 @@ public class Goose extends NPC {
 		
 		
 		
-		// sounds
+		// Goose Honking
+		
+		// Decrement counter
 		honkCounter--;
+		
+		// When counter reaches 0, honk. 
 		if(honkCounter < 0){
 			
+			// Randomly select which honk..
 			int whatHonk = ThreadLocalRandom.current().nextInt(0,3);
-			//System.out.println("whatHonk: " + whatHonk);
+			
+			// NOTE: This should be a soundclip set..
+			
 			switch(whatHonk){
 			case 0:
 				SoundManager.goose.play();
@@ -117,26 +133,31 @@ public class Goose extends NPC {
 				SoundManager.goose3.play();
 				break;
 			}
-			honkCounter = ThreadLocalRandom.current().nextInt(8000,24000);
-			//honk.play();
+			
+			// Randomly assign time till next honk. 
+			//honkCounter = ThreadLocalRandom.current().nextInt(8000,24000);
+			honkCounter = ThreadLocalRandom.current().nextInt(800,2400);
+			
 		}
 		
 
 
-
+		// NPC updates
 		npcMovement(gc, gm, dt);
-		//npcWalkingAnimation(dt);
+		//npcWalkingAnimation(dt); // managed internally for goose. (maybe should change that)
 		npcUpdate(gc, gm, dt);
 
 		
 	}
 
+	/**
+	 * Renders the Goose. 
+	 */
 	@Override
-	public void render(GameContainer gc, Renderer r) {
+	public void render(Renderer r) {
 		
-		r.drawImageTile(gooseTile, (int)posX, (int)posY-16, (int)animationState, direction);
-		renderComponents(gc,r);
-		
+		r.drawImageTile(Textures.gooseTile, (int)posX, (int)posY-16, (int)animationState, direction);
+		renderComponents(r);
 		
 		
 	}
@@ -144,26 +165,7 @@ public class Goose extends NPC {
 	@Override
 	public void collision(GameObject other, AABBComponent otherHitBox) {
 		
-		if(other.getTag() == "bullet"){
-			other.dead = true;
-			
-			int whatHonk = ThreadLocalRandom.current().nextInt(0,6);
-			switch(whatHonk){
-			case 0:
-				SoundManager.goose.play();
-				break;
-				
-			case 1:
-				SoundManager.goose2.play();
-				break;
-			case 2:
-				SoundManager.goose3.play();
-				break;
-			default: 
-				break;
-			}
-			
-		}
+		// TODO: Goose diesnt collide yet...  7/3/21
 		
 	}
 

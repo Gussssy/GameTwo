@@ -14,9 +14,10 @@ import com.gussssy.gametwo.game.objects.player.Player;
 public class DebugPanel {
 
 	// booleans holding the status of the DebugPanel buttons
-	public static boolean showAwareness = false; 
+	public static boolean showVision = false; 
 	public static boolean showPathMap = false; 
 	public static boolean showTileCollision = false; 
+	public static boolean showHitBoxes = false;
 	
 	// If trhis is true, will print to console infomation about key presses specifically the space bar for jump. 
 	public static boolean debugInputLoss = false;
@@ -30,16 +31,20 @@ public class DebugPanel {
 	static int textOffSetX = 5;
 
 	// location of awareness button
-	static int awarenessX = initialButtonOffSet;
-	static int awarenessY = initialButtonOffSet;
+	static int visionX = initialButtonOffSet;
+	static int visionY = initialButtonOffSet;
 
 	// location of pathMap button
 	static int pathMapX = initialButtonOffSet;
-	static int pathMapY = awarenessY + buttonHeight + buttonSpacing;
+	static int pathMapY = visionY + buttonHeight + buttonSpacing;
 	
 	// location of tileCollision button
 	static int tileCollisionX = initialButtonOffSet;
 	static int tileCollisionY = pathMapY + buttonHeight + buttonSpacing;
+	
+	// location of the hitBoxes button
+	static int hitBoxesButtonX = initialButtonOffSet;
+	static int hitBoxesButtonY = tileCollisionY + buttonHeight + buttonSpacing;
 	
 	
 	//Debug Messages
@@ -63,8 +68,6 @@ public class DebugPanel {
 	private static Player player = GameManager.player; // is it ok to do this? Any risk of player not being inititialised? 
 	
 	
-
-
 	
 	/**
 	 * Update DebugPanel
@@ -81,15 +84,15 @@ public class DebugPanel {
 			System.out.println("Cursor Location: x = "+ mouseX + ", y = " + mouseY);
 
 			// Awareness Button: is cursor over awareness button?
-			if(mouseX >= awarenessX && mouseX <= awarenessX + buttonWidth && mouseY >= awarenessY && mouseY <= awarenessY + buttonHeight){
+			if(mouseX >= visionX && mouseX <= visionX + buttonWidth && mouseY >= visionY && mouseY <= visionY + buttonHeight){
 
 				// cursor is over the button
 
 				// toggle show awareness
-				if(showAwareness) {
-					showAwareness = false;
+				if(showVision) {
+					showVision = false;
 				}else { 
-					showAwareness = true;
+					showVision = true;
 				}
 			}
 
@@ -118,6 +121,20 @@ public class DebugPanel {
 					showTileCollision = true;
 				}
 			}
+			
+
+			// HitBoxes Button
+			if(mouseX >= hitBoxesButtonX && mouseX <= hitBoxesButtonX + buttonWidth && mouseY >= hitBoxesButtonY && mouseY <= hitBoxesButtonY + buttonHeight){
+
+				// cursor is over the button
+
+				// toggle show awareness
+				if(showHitBoxes) {
+					showHitBoxes = false;
+				}else { 
+					showHitBoxes = true;
+				}
+			}
 
 
 		}
@@ -130,15 +147,15 @@ public class DebugPanel {
 		// Set renderer z depth so that debug items are not effected by lighting effects
 		r.setzDepth(-1);
 
-		// render awareness button
-		if(showAwareness){
+		// render vision button
+		if(showVision){
 			// button is active so green rectangle
-			r.drawFillRect(awarenessX + r.getCamX(), awarenessX + r.getCamY(), buttonWidth, buttonHeight, 0xff00ff00);
+			r.drawFillRect(visionX + r.getCamX(), visionX + r.getCamY(), buttonWidth, buttonHeight, 0xff00ff00);
 		}else{
 			// button is not active so red rectangle
-			r.drawFillRect(awarenessX + r.getCamX(), awarenessX + r.getCamY(), buttonWidth, buttonHeight, 0xffff0000);
+			r.drawFillRect(visionX + r.getCamX(), visionX + r.getCamY(), buttonWidth, buttonHeight, 0xffff0000);
 		}
-		r.drawText("Awareness", awarenessX + textOffSetX + r.getCamX(), awarenessY + textOffSetY + r.getCamY(), 0xff000000);
+		r.drawText("Vision", visionX + textOffSetX + r.getCamX(), visionY + textOffSetY + r.getCamY(), 0xff000000);
 
 		// render pathMap button
 		if(showPathMap){
@@ -160,6 +177,17 @@ public class DebugPanel {
 			r.drawFillRect(tileCollisionX + r.getCamX(), tileCollisionY + r.getCamY(), buttonWidth, buttonHeight, 0xffff0000);
 		}
 		r.drawText("Tile Collision", tileCollisionX + textOffSetX + r.getCamX(), tileCollisionY + textOffSetY + r.getCamY(), 0xff000000);
+		
+		
+		// render hitBoxes Button
+		if(showHitBoxes){
+			// button is active so green rectangle
+			r.drawFillRect(hitBoxesButtonX + r.getCamX(), hitBoxesButtonY + r.getCamY(), buttonWidth, buttonHeight, 0xff00ff00);
+		}else{
+			// button is not active so red rectangle
+			r.drawFillRect(hitBoxesButtonX + r.getCamX(), hitBoxesButtonY + r.getCamY(), buttonWidth, buttonHeight, 0xffff0000);
+		}
+		r.drawText("Hit Boxes", hitBoxesButtonX + textOffSetX + r.getCamX(), hitBoxesButtonY + textOffSetY + r.getCamY(), 0xff000000);
 
 		
 		// return renderer z depth to 0 so that lighting effects will still be applied to further rendering

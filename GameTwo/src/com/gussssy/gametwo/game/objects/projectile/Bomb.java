@@ -137,13 +137,13 @@ public class Bomb extends GameObject implements ExplosiveObject{
 	}
 
 	@Override
-	public void render(GameContainer gc, Renderer r) {
+	public void render(Renderer r) {
 
 		r.drawImage(bombImage, (int)(posX), (int)(posY));
 		r.drawFillRect((int)(posX + particleX), (int)(posY + particleY) , 2, 2, 0xffffffff);
 		
 		//r.drawFillRect((int)(posX), (int)(posY), 20, 20, 0xff);
-		this.renderComponents(gc, r);
+		this.renderComponents(r);
 
 	}
 

@@ -13,6 +13,7 @@ import com.gussssy.gametwo.game.objects.GameObject;
 public abstract class TempObject extends GameObject{
 	
 	protected int lifeTime;
+	protected int color;
 	
 	public TempObject(int lifeTime){
 		this.lifeTime = lifeTime;

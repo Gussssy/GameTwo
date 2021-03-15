@@ -9,7 +9,7 @@ import com.gussssy.gametwo.game.objects.Charachter;
 /**
  * A Health Bar that will be rendered above the parent NPC showing the NPCs current health.
  * 
- * All chnages to an NPCs health is done via this class, not the NPCs class. 
+ * All changes to an NPCs health is done via this class, not the NPCs class. 
  * 
  * */
 public class HealthBar extends Component {
@@ -91,11 +91,13 @@ public class HealthBar extends Component {
 			return;
 		}
 		
-		// The Charachter will die if health reaches 0
+		// The Character will die if health reaches 0
 		if(healthPercent <= 0){
-			parent.dead = true; 
-			SoundManager.dead.stop();
-			SoundManager.dead.play();
+			//parent.dead = true; 
+			//parent.deathSound.stop();
+			//parent.deathSound.play();
+			//SoundManager.dead.stop();
+			//SoundManager.dead.play();
 		}
 	}
 
@@ -104,7 +106,7 @@ public class HealthBar extends Component {
 	 * Renders a health bar above the parent GameObject 
 	 **/
 	@Override
-	public void render(GameContainer gc, Renderer r) {
+	public void render(Renderer r) {
 		
 		if(healthPercent == 100)return;
 		
