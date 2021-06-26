@@ -1,10 +1,13 @@
 package com.gussssy.gametwo.game.level;
 
 import com.gussssy.gametwo.engine.GameContainer;
+import com.gussssy.gametwo.engine.gfx.Image;
 import com.gussssy.gametwo.game.DayNightCycle;
 import com.gussssy.gametwo.game.GameManager;
 import com.gussssy.gametwo.game.SoundManager;
 import com.gussssy.gametwo.game.debug.DebugPanel;
+import com.gussssy.gametwo.game.objects.environment.GameImage;
+import com.gussssy.gametwo.game.objects.environment.GameText;
 import com.gussssy.gametwo.game.objects.environment.Platform;
 import com.gussssy.gametwo.game.objects.npc.BadBotBot;
 import com.gussssy.gametwo.game.objects.npc.BotBot;
@@ -23,9 +26,16 @@ public class CollisionWorld extends Level {
 	
 	// Controls day night cycle
 	DayNightCycle cycle;
+	
+	
+	//private Image trimble = new Image("/test/Trimble 320x81 No Halo");
+	
+	private GameImage trimble = new GameImage("/test/Trimble 320x81 No Halo.png", 97f, 131f);
+	private GameText text = new GameText(160f, 200f);
 
 	public CollisionWorld(String levelImagePath, String backgroundImagePath, GameManager gm) {
 		super(levelImagePath, backgroundImagePath, gm);
+		
 		
 		
 		// render tile collisins on this map
@@ -70,6 +80,10 @@ public class CollisionWorld extends Level {
 		// grenade modification
 		Grenade.setMaxBeeps(3000);
 		Grenade.sound = false;
+		
+		// GameImage testing
+		gm.addObject(trimble);
+		gm.addObject(text);
 		
 		
 		

@@ -22,8 +22,8 @@ public class PathFindingTester {
 
 	// Images used to illustrate pathfinding
 	private Image goose = new Image("/goose.png");
-	//private Image marker = new Image("/marker.png"); // not currently in use 
-	//private Image node = new Image("/node.png");		// not currently in use
+	private Image marker = new Image("/marker.png"); // not currently in use 
+	private Image node = new Image("/node.png");		// not currently in use
 	private Image flag = new Image("/flag.png");
 
 	// Flag and Goose for viosualizinf path finding

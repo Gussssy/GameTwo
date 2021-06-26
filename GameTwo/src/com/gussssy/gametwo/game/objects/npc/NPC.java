@@ -156,6 +156,9 @@ public abstract class NPC extends Charachter {
 			//SoundManager.dead.stop();
 			//SoundManager.dead.play();
 		}
+		
+		// regeneration
+		regenerate();
 
 		
 		// COMPONENT UPDATE

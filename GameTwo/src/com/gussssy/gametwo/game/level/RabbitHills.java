@@ -12,6 +12,9 @@ public class RabbitHills extends Level {
 	
 	private static Image levelMap = new Image("/level/rabbit_hill.png");
 	private static Image levelBackground = new Image("/Area5_bg1.png");
+	
+	
+	
 
 	Rabbit rabbit = new Rabbit(15, 20);
 	Rabbit rabbit1 = new Rabbit(15, 20);

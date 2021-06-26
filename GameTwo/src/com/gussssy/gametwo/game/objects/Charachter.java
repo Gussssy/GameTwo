@@ -44,8 +44,14 @@ public abstract class Charachter extends GameObject {
 	protected CharachterCollisionHandler collisionHandler = new CharachterCollisionHandler(this);
 	
 	// Health:
-	protected int health = 100;
+	protected int maxHealth = 100;
+	protected int health = maxHealth;
 	protected HealthBar healthBar = new HealthBar(this);
+	
+	// Regeneration
+	protected boolean regenerate = true;
+	protected int regenerationInterval = 60;
+	protected int regenerationTimer;
 	
 	// Weapon 
 	protected Weapon weapon = null;
@@ -164,6 +170,24 @@ public abstract class Charachter extends GameObject {
 	
 	
 	
+	protected void regenerate(){
+		
+		if(regenerationTimer == 0){
+			
+			// apply regeneration, reset timer
+			regenerationTimer = regenerationInterval;
+			healthBar.healthChanged(10);
+			
+		}else{
+			regenerationTimer--; 
+			
+		}
+		
+		
+	}
+	
+	
+	
 	public float getSpeed() {
 		return speed;
 	}
@@ -214,6 +238,22 @@ public abstract class Charachter extends GameObject {
 
 	public void setTeam(int team) {
 		this.team = team;
+	}
+
+
+	/**
+	 * @return the maxHealth
+	 */
+	public int getMaxHealth() {
+		return maxHealth;
+	}
+
+
+	/**
+	 * @param maxHealth the maxHealth to set
+	 */
+	public void setMaxHealth(int maxHealth) {
+		this.maxHealth = maxHealth;
 	}
 
 	

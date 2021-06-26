@@ -145,6 +145,10 @@ public class Player extends Charachter{
 		// Update Components - AABB and HealthBar (coming soon)
 		this.updateComponents(gc, gm, dt);
 		
+		// regenration
+		// character method that regenrates 10hp every 60~ updates
+		regenerate();
+		
 		
 		// Temporary / Testing  Weapon toggling
 		if(gc.getInput().isKeyDown(KeyEvent.VK_V)){

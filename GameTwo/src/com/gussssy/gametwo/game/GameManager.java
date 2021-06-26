@@ -13,10 +13,13 @@ import com.gussssy.gametwo.game.level.Arena2;
 import com.gussssy.gametwo.game.level.Arena5;
 import com.gussssy.gametwo.game.level.Arena6;
 import com.gussssy.gametwo.game.level.CollisionWorld;
+import com.gussssy.gametwo.game.level.Crevasse;
+import com.gussssy.gametwo.game.level.FlatMap;
 import com.gussssy.gametwo.game.level.IceSpike;
 import com.gussssy.gametwo.game.level.Level;
 import com.gussssy.gametwo.game.level.LevelTile;
 import com.gussssy.gametwo.game.level.MyPalace;
+import com.gussssy.gametwo.game.level.PathFindingMap;
 import com.gussssy.gametwo.game.level.RabbitHills;
 import com.gussssy.gametwo.game.level.RedPlanet;
 import com.gussssy.gametwo.game.level.SnowMap1;
@@ -26,6 +29,7 @@ import com.gussssy.gametwo.game.level.WaterTestMap;
 import com.gussssy.gametwo.game.objects.GameObject;
 import com.gussssy.gametwo.game.objects.player.Player;
 import com.gussssy.gametwo.game.particles.TileDestruction;
+import com.gussssy.gametwo.game.pathfinding.PathFinderTwo;
 import com.gussssy.gametwo.game.physics.Physics;
 import com.gussssy.gametwo.game.ui.HUD;
 import com.gussssy.gametwo.game.ui.TabMenu;
@@ -50,7 +54,7 @@ public class GameManager extends AbstractGame{
 	public static final int TS = 16;
 
 	// Game Components
-	private Camera camera;
+	public Camera camera;
 	
 	// Renderer - used to set the ambient colour via the GameManager
 	private static Renderer r;
@@ -99,7 +103,24 @@ public class GameManager extends AbstractGame{
 	private long totalUpdateTime = 0;
 	private int updates;
 	private boolean testUpdateTime = false; 
-
+	
+	
+	
+	
+	
+	// PathFinding Testing and Visualization Variables
+	
+	// Initial Location and Target Location Setting
+	boolean targetSet = false;
+	boolean startSet = false;
+	int targetX, targetY;
+	int startX, startY;
+	
+	// Images used to illustrate pathfinding
+	private Image goose = new Image("/goose.png");		// rendered at the start location 
+	private Image marker = new Image("/marker.png");  	// marks tiles that contain a node yet to be expanded
+	private Image node = new Image("/node.png");		// shows the location of a path node	
+	private Image flag = new Image("/flag.png");		// rendered at the target location
 	
 	
 	
@@ -108,7 +129,12 @@ public class GameManager extends AbstractGame{
 	// volume test - apprently i cant exceed a value of  
 	private float volume = 5f;
 	
+	
+	// SpaceX Logo, testing how it looks at this resolution 
 	private Image spaceXLogo = new Image("/spacex_logo.png");
+	
+	// testing generated spiral
+	private Image spiral = new Image("/generated_textures/spiral1.png");
 
 	
 	/**
@@ -124,12 +150,15 @@ public class GameManager extends AbstractGame{
 
 		// INIT PLAYER 
 		objects.add(player);
+		
+		// CAMERA
+		camera = new Camera("player");
 
 		// LEVEL LOADING
 		//level = new Arena2("/Arena2.png", "/Area5_bg1.png", this);
 		//level = new Arena5("/Arena5_v3.png", "/Area5_bg1.png", this);
 		//level = new WaterTestMap("/watermap1.png","/Area5_bg1.png", this);
-		level = new SnowMap1("/snowmap1.png","/nightsky_bg.png",this);
+		//level = new SnowMap1("/snowmap1.png","/nightsky_bg.png",this);
 		//level= new CollisionWorld("/CollisionTestMap.png","/Area5_bg1.png", this);
 		//level = new Arena6("/Arena6.png","/Area5_bg1.png", this);
 		//level = new MyPalace("/Palace1.png", "/Area5_bg1.png", this);
@@ -137,14 +166,15 @@ public class GameManager extends AbstractGame{
 		//level = new RabbitHills(this);
 		//level = new WaterSiege(this);
 		//level = new FlatMap(this);
-		//level = new RedPlanet(this);
+		level = new RedPlanet(this);
 		//level = new SpaceStationMap(this);
+		//level = new PathFindingMap(this);
+		//level = new Crevasse(this);
 
 		// CURSOR
 		cursor.setAlpha(true);
 
-		// CAMERA
-		camera = new Camera("player");
+		
 	}
 
 
@@ -316,6 +346,94 @@ public class GameManager extends AbstractGame{
 			}
 			
 		}
+		
+		
+		
+		// Pathfinding testing
+		
+		
+		// PATH FINDING A STAR ALGORITM TESTING
+		// Below are responses to keyboard input of 2,3,4 and 5. Used to set target and stat locations to find a path between
+		// KEYDOWN 2:  Set a target location  
+		if(gc.getInput().isKeyDown(KeyEvent.VK_2)){
+
+
+			for(LevelTile tile : getLevelTiles()){
+				tile.accessible = false;
+				tile.visited = false;
+			}
+
+			int x = gc.getInput().getMouseX() + gc.getRenderer().getCamX();
+			int y = gc.getInput().getMouseY() + gc.getRenderer().getCamY();
+			int tileX = x/GameManager.TS;
+			int tileY = y/GameManager.TS;
+			targetX = tileX;
+			targetY = tileY;
+			targetSet = true;
+
+			System.out.println("Setting PathFinding target to: tileX = " + tileX + ", tileY = " + tileY);
+
+		}
+
+		// KEYDOWN 3:  Set a start Location
+		if(gc.getInput().isKeyDown(KeyEvent.VK_3)){
+
+			if(targetSet){
+
+				int x = gc.getInput().getMouseX() + gc.getRenderer().getCamX();
+				int y = gc.getInput().getMouseY() + gc.getRenderer().getCamY();
+				int tileX = x/GameManager.TS;
+				int tileY = y/GameManager.TS;
+				startX = tileX;
+				startY = tileY;
+				startSet = true;
+
+				System.out.println("Setting PathFinding start to: tileX = " + tileX + ", tileY = " + tileY);
+
+				PathFinderTwo.initPathFinding(this, startX, startY, targetX, targetY);
+
+			}else {
+				System.out.println("Cant set start of pathfinding untill target is set");
+			}	
+		}
+
+
+		// KEYDOWN 4: Perform a single interation of A star pathfinding. Expands the least cost node.
+		if(gc.getInput().isKeyDown(KeyEvent.VK_4)){
+
+			if(targetSet && startSet){
+
+				System.out.println("Expanding least cost node: ");
+				PathFinderTwo.expandLeastCostNode(this);
+
+			}else {
+				System.out.println("Cant execute pathfinding as either one or both, target and start have not been set");
+			}	
+		}
+
+		// KEYDOWN 5: Reset pathfinding test. Removes target and start location, set all tiles to accessible. 
+		if(gc.getInput().isKeyDown(KeyEvent.VK_5)){
+
+			System.out.println("PathFinding Reset");
+			targetSet = false;
+			startSet = false;
+			setAllTilesAccessible(false);
+
+		}
+
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 
 
 		// -------------------------------------------------------------------------------------------------------
@@ -536,11 +654,21 @@ public class GameManager extends AbstractGame{
 		// testing observation window
 		//r.drawImage(window, 152*16, 21*16);
 		//r.drawImage(window, 31*16, 18*16);
+		
+		
+		// rendering spiral
+		//r.drawImage(spiral, 0, 0);
+		
 
 		// Render Game Objects
 		for(GameObject o : objects ){
 			o.render(r);
 		}
+		
+		
+		if(targetSet)r.drawImage(flag, targetX*TS, targetY*TS);
+		if(startSet)r.drawImage(goose, startX*TS, startY*TS);
+		
 		
 		//Render Events
 		EventManager.render(r);

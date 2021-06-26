@@ -285,8 +285,7 @@ private void rangedAgressivePathing(GameManager gm){
 		
 		if(getDistanceToObject(target) < safeRange){
 			
-			// target is to close
-			// select a new path
+			// target is to close to the wizard. Should try and retreat.
 			pathInstruction = "wait";
 
 			// cancel any old movement commands
@@ -296,7 +295,6 @@ private void rangedAgressivePathing(GameManager gm){
 			
 		}else {
 			pathInstruction = "wait";
-			
 
 			// cancel any old movement commands
 			movingLeft = false;

@@ -11,6 +11,11 @@ public class Camera{
 	
 	private float offX, offY;
 	
+	
+	// Camera Adjustments - for altering the the field of vision in particular circumstances
+	private int adjustmentX = 0;
+	private int adjustmentY = 0;
+	
 	public boolean freezeCamera = false;
 	
 	public Camera(String tag){
@@ -76,6 +81,9 @@ public class Camera{
 		}
 		
 		
+		// apply any camera position adjustments if any
+		offX += adjustmentX;
+		offY += adjustmentY;
 		
 		
 		
@@ -134,6 +142,20 @@ public class Camera{
 
 	public void setOffY(float offY){
 		this.offY = offY;
+	}
+
+	/**
+	 * @param adjustmentX the adjustmentX to set
+	 */
+	public void setAdjustmentX(int adjustmentX) {
+		this.adjustmentX = adjustmentX;
+	}
+
+	/**
+	 * @param adjustmentY the adjustmentY to set
+	 */
+	public void setAdjustmentY(int adjustmentY) {
+		this.adjustmentY = adjustmentY;
 	}
 
 }

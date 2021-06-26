@@ -173,7 +173,8 @@ public class ColorChangingParticle extends Particle{
 		if(gravity)vy += Level.gravity * dt * 10;
 		
 		// testing slowing down of particles
-		vx -= 1 * decel * dt;
+		// NOTE: this causes movement on the x axis when there is none
+		//vx -= 1 * decel * dt;
 		
 		
 	}

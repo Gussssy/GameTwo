@@ -61,10 +61,10 @@ public class Rabbit extends NPC {
 		this.height = 16 - topPadding;
 		
 		// Super jumps
-		//jump = -10;
+		jump = -10;
 		
-		// Sets rabbit speed, faster then most NPCs
-		speed = 150;
+		// Sets rabbit speed, faster then most NPCs... NOTE: moved back to 100 from 150 due to missing tiles on paths
+		speed = 100;
 		
 		// Initialize hit-box and add to the components list
 		hitBox = new AABBComponent(this);

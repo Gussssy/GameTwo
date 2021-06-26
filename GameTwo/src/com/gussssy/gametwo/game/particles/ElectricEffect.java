@@ -12,6 +12,8 @@ import com.gussssy.gametwo.game.SoundManager;
 
 public class ElectricEffect implements Event{
 	
+	private boolean sound = false;
+	
 	// animation controls
 	float animationState = 0f;
 	float animationSpeed = 0.2f;
@@ -87,7 +89,7 @@ public class ElectricEffect implements Event{
 		// Making New Sparks at random time intervals
 		sparkTimer --; 
 		if(sparkTimer == 0){
-			SoundManager.electricSparks.playRandom();
+			if(sound)SoundManager.electricSparks.playRandom();
 			
 			int vx = ThreadLocalRandom.current().nextInt(-40, 40);
 			int vy = ThreadLocalRandom.current().nextInt(-20, 0);

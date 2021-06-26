@@ -19,7 +19,7 @@ public class NPCSpawner extends GameObject{
 	private int maxSpawns = 20;
 	private int activeSpawns = 0;
 	//private int cooldown = 180;
-	private int cooldown = 1;
+	private int cooldown = 30;
 	private boolean onCooldown = false;
 	private int counter = cooldown;
 	private ArrayList<NPC> spawns = new ArrayList<NPC>();

@@ -39,7 +39,7 @@ public class SnowMap1 extends Level implements TimeObserver{
 		
 		//
 		NPCSpawner wizardSpawner = new NPCSpawner(11,42, "ice_wizard");
-		wizardSpawner.setMaxSpawns(2);
+		wizardSpawner.setMaxSpawns(25);
 		gm.addObject(wizardSpawner);
 		
 		
@@ -49,7 +49,7 @@ public class SnowMap1 extends Level implements TimeObserver{
 		//gm.addObject(badbotSpawner);
 		
 		NPCSpawner badSmartBotSpawner = new NPCSpawner(131,33, "badsmartbot");
-		badSmartBotSpawner.setMaxSpawns(2);
+		badSmartBotSpawner.setMaxSpawns(25);
 		gm.addObject(badSmartBotSpawner);
 		
 		// 
@@ -80,7 +80,7 @@ public class SnowMap1 extends Level implements TimeObserver{
 	public void update(GameContainer gc, GameManager gm, float dt) {
 		
 		// update the weather
-		weather.update(gc, gm, dt);
+		//weather.update(gc, gm, dt);
 		
 		/// update day/night
 		//cycle.update();

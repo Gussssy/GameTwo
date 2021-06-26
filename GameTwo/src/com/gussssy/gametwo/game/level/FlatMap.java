@@ -23,9 +23,9 @@ public class FlatMap extends Level{
 		
 		PathFinderTwo.setPathMap(gm, 0, 11);
 		
-		gm.addObject(bot);
-		gm.addObject(rabbit);
-		gm.addObject(goose);
+		//gm.addObject(bot);
+		//gm.addObject(rabbit);
+		//gm.addObject(goose);
 		
 		
 		

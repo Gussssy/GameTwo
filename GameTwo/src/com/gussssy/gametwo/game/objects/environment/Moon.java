@@ -25,6 +25,8 @@ public class Moon extends GameObject{
 	
 	
 	
+	
+	
 	/**
 	 * Constructs a new moon at a location specified by posX and posY.  
 	 * 
@@ -64,12 +66,12 @@ public class Moon extends GameObject{
 		
 		
 		// Return to start x/y when leaving the level
-		if(posX > gm.getGameWidth()){
+		if(posX > gm.getLevelWidth()*GameManager.TS){
 			//posX = initX;
 			posX = 0;
 		}
 		
-		if(posY > gm.getGameHeight()){
+		if(posY > gm.getLevelHeight()*GameManager.TS){
 			//posY = initY;
 			posY = 0;
 		}
@@ -77,6 +79,8 @@ public class Moon extends GameObject{
 		
 	}
 
+	
+	
 	@Override
 	public void render(Renderer r) {
 		
@@ -84,6 +88,9 @@ public class Moon extends GameObject{
 		
 	}
 
+	
+	
+	
 	@Override
 	public void collision(GameObject other, AABBComponent otherHitBox) {
 		// TODO Auto-generated method stub

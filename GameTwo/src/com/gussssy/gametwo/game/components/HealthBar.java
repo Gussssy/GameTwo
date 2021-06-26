@@ -57,17 +57,38 @@ public class HealthBar extends Component {
 	 **/
 	public void healthChanged(int change){
 		
-		if(print)System.out.println("HealthParPixels before: " + healthBarPixels);
 		
+		// AVOID OVER HEAL
+		// determine if chnage in health is appropriate: e.g doesnt take the unit about maimum health
+		if(change + parent.getHealth() > parent.getMaxHealth()){
+			
+			// change will take health over max health, 
+			
+			// alter the change to the difference between max health and current health.
+				// will increase health to max value and not above it, (likely to be zero)
+			change = parent.getMaxHealth() - parent.getHealth();
+		}
+		
+		
+		
+		
+		
+		// SET THE NEW HEALTH VALUE
 		// set the new underlying health value for the npc
 		parent.setHealth(parent.getHealth() + change);
 		
+		
+		
+		// CHANGE HEALTH BAR DISPLAY TO SHOW THE CHANGE
 		// determine the new size of the green portion of the health bar
+		if(print)System.out.println("HealthParPixels before: " + healthBarPixels);
 		healthPercent = (double)parent.getHealth() / 100;
 		newHealthBarPixels = healthPercent * 16.0;
 		
 		// set new size in pixels of the healthbar after the change in health
 		healthBarPixels = (int)newHealthBarPixels;
+		
+		
 		
 		if(print){
 			System.out.println(parent.getTag() + " was just damaged, health is now: " + parent.getHealth());
@@ -93,7 +114,7 @@ public class HealthBar extends Component {
 		
 		// The Character will die if health reaches 0
 		if(healthPercent <= 0){
-			//parent.dead = true; 
+			parent.dead = true; 
 			//parent.deathSound.stop();
 			//parent.deathSound.play();
 			//SoundManager.dead.stop();
@@ -107,6 +128,10 @@ public class HealthBar extends Component {
 	 **/
 	@Override
 	public void render(Renderer r) {
+		
+		if(true)return;
+		
+		System.out.println("HealthBar Render: health percent: " + healthPercent);
 		
 		if(healthPercent == 100)return;
 		

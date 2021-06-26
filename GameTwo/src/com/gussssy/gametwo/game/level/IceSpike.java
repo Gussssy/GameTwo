@@ -63,6 +63,9 @@ public class IceSpike extends Level {
 		//super(levelMap, levelBackground, gm);
 		super(levelMapPath, levelBackgroundPath, gm);
 		
+		wizardSpawner.setMaxSpawns(25);
+		badSpawner.setMaxSpawns(25);
+		
 		
 		GameManager.player.setPlayerLocation(20, 103);
 		
